@@ -11,6 +11,10 @@ valore = liquidità + Σ (quantità × prezzo di adesso)
 
 ricalcolato a ogni battito del mercato. (I soldi restano finti perché il bot è in simulazione.)
 
+Gli importi sono mostrati in **euro**, convertiti al cambio del momento: il bot tiene i conti in
+USDT, quindi le **percentuali sono identiche** ma le cifre in euro possono differire dal resoconto
+su Telegram. Il cambio usato è sempre visibile nelle Impostazioni.
+
 ---
 
 ## Come funziona
@@ -20,6 +24,7 @@ ricalcolato a ogni battito del mercato. (I soldi restano finti perché il bot è
 | Liquidità, posizioni, operazioni, storico | `state/portfolio.json` nel repo **privato** `trading-bot` | letto ogni 60 secondi |
 | Prezzi BTC/ETH | WebSocket di Binance (se cade, Kraken) | a ogni scambio |
 | Curva del passato | candele storiche + le operazioni del bot | a ogni cambio di periodo |
+| Cambio USDT→EUR | Binance (`EURUSDT`), ripiego Frankfurter | all'avvio e ogni 30 minuti |
 
 Non c'è nessun server: è un sito statico. I dati non passano da nessuna parte se non dal
 tuo browser.

@@ -10,8 +10,11 @@ const CONFIG = {
   repo: "trading-bot",
   path: "state/portfolio.json",
 
-  // Valuta in cui è espresso il capitale (deve combaciare con config.yaml del bot).
+  // Valuta in cui il bot tiene i conti (deve combaciare con config.yaml del bot).
   quote: "USDT",
+
+  // Valuta mostrata a schermo: convertiamo tutto in euro col cambio del momento.
+  display: "€",
 
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,

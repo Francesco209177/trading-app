@@ -19,6 +19,7 @@ const App = (() => {
     setRepo: document.getElementById("setRepo"),
     setSource: document.getElementById("setSource"),
     setUpdated: document.getElementById("setUpdated"),
+    setRate: document.getElementById("setRate"),
   };
 
   const NAMES = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana", XRP: "XRP", ADA: "Cardano" };
@@ -38,6 +39,11 @@ const App = (() => {
 
   const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
   const nameOf = (pair) => NAMES[Sym.base(pair)] || Sym.base(pair);
+
+  // Il bot tiene i conti in USDT: a schermo mostriamo tutto in euro,
+  // convertito al cambio del momento. Le percentuali non cambiano mai,
+  // perché il cambio si semplifica tra numeratore e denominatore.
+  const eur = (usdt) => usdt * Prices.eurRate;
 
   /* ---------------- avvio ---------------- */
 
@@ -106,8 +112,11 @@ const App = (() => {
       })
     );
 
-    seriesData = Equity.series(state, candles, from);
-    if (!seriesData.length) return;
+    const raw = Equity.series(state, candles, from);
+    if (!raw.length) return;
+
+    // Anche la curva vive in euro, così scrub e numero grande parlano la stessa lingua.
+    seriesData = raw.map((p) => ({ time: p.time, value: eur(p.value) }));
 
     rangeFirstValue = seriesData[0].value;
     lastPointTime = seriesData[seriesData.length - 1].time;
@@ -140,7 +149,7 @@ const App = (() => {
 
     // Il numero grande e il grafico seguono ogni singolo tick.
     renderHero(live);
-    if (lastPointTime && Chart.ready && !scrub) Chart.updateLast(lastPointTime, live);
+    if (lastPointTime && Chart.ready && !scrub) Chart.updateLast(lastPointTime, eur(live));
 
     // Le card costano di più da ridisegnare: bastano due volte al secondo,
     // altrimenti su telefono si scatterebbe inutilmente a ogni scambio.
@@ -159,9 +168,10 @@ const App = (() => {
   }
 
   function renderHero(live) {
-    const value = scrub ? scrub.value : live;
+    // Lo scrub arriva già dalla curva (in euro); il valore vivo va convertito.
+    const value = scrub ? scrub.value : eur(live);
 
-    el.equity.innerHTML = `${Fmt.money(value)} <span style="font-size:.45em;color:var(--muted);font-weight:600">${CONFIG.quote}</span>`;
+    el.equity.innerHTML = `${Fmt.money(value)} <span style="font-size:.45em;color:var(--muted);font-weight:600">${CONFIG.display}</span>`;
 
     if (scrub) {
       el.heroLabel.textContent = Fmt.dateTime(new Date(scrub.time * 1000));
@@ -181,21 +191,21 @@ const App = (() => {
       const sameDay = when.toDateString() === new Date().toDateString();
       setDelta(
         el.deltaDay,
-        diff,
+        eur(diff),
         (diff / snap.equity) * 100,
         sameDay ? `dalle ${Fmt.time(when)}` : `dal ${Fmt.dateTime(when)}`
       );
     }
 
     const total = live - state.start_equity;
-    el.deltaTotal.textContent = `${Fmt.signed(total)} (${Fmt.pct((total / state.start_equity) * 100)}) da inizio`;
+    el.deltaTotal.textContent = `${Fmt.signed(eur(total))} ${CONFIG.display} (${Fmt.pct((total / state.start_equity) * 100)}) da inizio`;
     el.deltaTotal.className = "delta muted";
 
-    flash(live);
+    flash(eur(live));
   }
 
   function setDelta(node, diff, pct, suffix) {
-    node.textContent = `${Fmt.signed(diff)} (${Fmt.pct(pct)}) ${suffix}`;
+    node.textContent = `${Fmt.signed(diff)} ${CONFIG.display} (${Fmt.pct(pct)}) ${suffix}`;
     node.className = "delta " + (diff >= 0 ? "up" : "down");
   }
 
@@ -216,7 +226,7 @@ const App = (() => {
     const cash = `
       <div class="cash">
         <span>Liquidità non investita</span>
-        <b>${Fmt.money(state.cash)} ${CONFIG.quote}</b>
+        <b>${Fmt.money(eur(state.cash))} ${CONFIG.display}</b>
       </div>`;
 
     if (!rows.length) {
@@ -235,11 +245,11 @@ const App = (() => {
           <div class="pos-icon ${cls}">${esc(base)}</div>
           <div class="pos-main">
             <div class="pos-name">${esc(nameOf(p.symbol))}</div>
-            <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(p.entry)}</div>
+            <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(eur(p.entry))}</div>
           </div>
           <div class="pos-right">
-            <div class="pos-value">${Fmt.money(p.value)}</div>
-            <div class="pos-pl ${p.pl >= 0 ? "up" : "down"}">${Fmt.signed(p.pl)} (${Fmt.pct(p.plPct)})</div>
+            <div class="pos-value">${Fmt.money(eur(p.value))}</div>
+            <div class="pos-pl ${p.pl >= 0 ? "up" : "down"}">${Fmt.signed(eur(p.pl))} (${Fmt.pct(p.plPct)})</div>
           </div>
         </div>`;
         })
@@ -261,9 +271,9 @@ const App = (() => {
           <div class="trade-side ${buy ? "buy" : "sell"}">${buy ? "↓" : "↑"}</div>
           <div class="trade-main">
             <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.base(t.symbol))}</div>
-            <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(t.price)}</div>
+            <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}</div>
           </div>
-          <div class="trade-val">${Fmt.money(t.value)}</div>
+          <div class="trade-val">${Fmt.money(eur(t.value))}</div>
         </div>`;
       })
       .join("");
@@ -288,8 +298,15 @@ const App = (() => {
     el.setSource.textContent = status === "live" ? Prices.source : "non collegato";
     const snap = state ? Equity.lastSnapshot(state) : null;
     el.setUpdated.textContent = snap
-      ? `${Fmt.dateTime(new Date(snap.time))} · ${Fmt.money(snap.equity)} ${CONFIG.quote}`
+      ? `${Fmt.dateTime(new Date(snap.time))} · ${Fmt.money(eur(snap.equity))} ${CONFIG.display}`
       : "—";
+
+    // Trasparenza: con quale cambio stiamo convertendo in euro.
+    if (el.setRate) {
+      el.setRate.textContent =
+        `1 ${CONFIG.quote} = ${Fmt.money(Prices.eurRate, 4)} ${CONFIG.display}` +
+        (Prices.eurRateReady ? "" : " (approssimato)");
+    }
   }
 
   /* ---------------- pulsanti ---------------- */

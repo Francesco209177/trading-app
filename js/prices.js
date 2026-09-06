@@ -218,6 +218,46 @@ const Prices = (() => {
     }
   }
 
+  /* ---------------- cambio euro ----------------
+
+     Il bot ragiona in USDT, ma noi mostriamo tutto in euro: serve quanti
+     euro vale un USDT. Il cambio si muove pochissimo, quindi basta
+     chiederlo all'avvio e ogni mezz'ora, tenendo da parte l'ultimo buono. */
+
+  const RATE_KEY = "portafoglio-bot.eurRate";
+  const RATE_FALLBACK = 0.86; // usato solo se non abbiamo mai ottenuto un cambio
+  let eurRate = Number(localStorage.getItem(RATE_KEY)) || null;
+
+  function setRate(value) {
+    if (!Number.isFinite(value) || value <= 0) return eurRate;
+    eurRate = value;
+    try {
+      localStorage.setItem(RATE_KEY, String(value));
+    } catch (e) {}
+    onTick(prices); // il cambio è nuovo: ridisegna
+    return eurRate;
+  }
+
+  async function fetchEurRate() {
+    // Binance quota EURUSDT = quanti USDT vale 1 EUR: a noi serve l'inverso.
+    try {
+      const res = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=EURUSDT");
+      if (!res.ok) throw new Error("binance");
+      const price = Number((await res.json()).price);
+      if (Number.isFinite(price) && price > 0) return setRate(1 / price);
+    } catch (e) {
+      /* si prova l'altra fonte */
+    }
+    // Ripiego: cambio ufficiale USD→EUR (USDT vale praticamente un dollaro).
+    try {
+      const res = await fetch("https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR");
+      const body = await res.json();
+      return setRate(Number(body && body.rates && body.rates.EUR));
+    } catch (e) {
+      return eurRate;
+    }
+  }
+
   /* ---------------- avvio ---------------- */
 
   function start(symbols, handlers) {
@@ -227,6 +267,8 @@ const Prices = (() => {
 
     snapshot();
     connect();
+    fetchEurRate();
+    setInterval(fetchEurRate, 30 * 60 * 1000);
 
     // Se per 90 secondi non arriva niente il socket è morto: si riparte.
     clearInterval(watchdog);
@@ -255,6 +297,13 @@ const Prices = (() => {
     },
     get source() {
       return source;
+    },
+    // Quanti euro vale 1 USDT (ripiego prudente finché non arriva il cambio vero).
+    get eurRate() {
+      return eurRate || RATE_FALLBACK;
+    },
+    get eurRateReady() {
+      return eurRate != null;
     },
   };
 })();
