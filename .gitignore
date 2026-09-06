@@ -1,0 +1,13 @@
+# Il repo e` PUBBLICO: qui dentro non deve finire nessun dato del portafoglio.
+_preview.html
+_preview-state.json
+*.json.bak
+portfolio.json
+
+# Roba di sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Configurazione locale dell'editor (non serve nel repo pubblico)
+.claude/

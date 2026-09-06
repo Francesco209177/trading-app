@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d12">
+<meta name="color-scheme" content="dark">
+<title>Portafoglio Bot</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css?v=1">
+</head>
+<body>
+
+<!-- ============ SCHERMATA CHIAVE (finché non c'è la chiave, esiste solo questa) ============ -->
+<div id="gate" class="gate">
+  <div class="gate-card">
+    <div class="gate-logo"></div>
+    <h1>Portafoglio Bot</h1>
+    <p class="gate-text">
+      Questa app mostra il portafoglio del tuo trading bot in tempo reale.
+      I dati stanno nel tuo repo privato: per leggerli serve una chiave GitHub di sola lettura,
+      che resta salvata solo su questo dispositivo.
+    </p>
+    <form id="gateForm" autocomplete="off">
+      <input id="tokenInput" type="password" inputmode="text" autocomplete="off" spellcheck="false"
+             placeholder="Incolla qui la chiave" aria-label="Chiave GitHub">
+      <button type="submit" id="gateBtn">Entra</button>
+    </form>
+    <p id="gateError" class="gate-error" hidden></p>
+    <details class="gate-help">
+      <summary>Come si crea la chiave</summary>
+      <ol>
+        <li>GitHub → foto profilo → <b>Settings</b></li>
+        <li>In fondo a sinistra: <b>Developer settings</b></li>
+        <li><b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b></li>
+        <li>Scadenza: 90 giorni. <b>Repository access</b>: solo <b>trading-bot</b></li>
+        <li><b>Permissions</b> → Repository permissions → <b>Contents: Read-only</b></li>
+        <li>Genera, copia la chiave e incollala qui sopra</li>
+      </ol>
+      <p>La chiave non può scrivere niente e vede solo quel repo. Se la perdi, la revochi da GitHub e smette di funzionare.</p>
+    </details>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<main id="app" hidden>
+  <header class="topbar">
+    <div class="brand"><span class="dot"></span> Portafoglio Bot</div>
+    <button id="settingsBtn" class="icon-btn" aria-label="Impostazioni">⋯</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-label" id="heroLabel">Valore del portafoglio</div>
+    <div class="equity" id="equity">—</div>
+    <div class="deltas">
+      <span class="delta" id="deltaDay">—</span>
+      <span class="delta muted" id="deltaTotal">—</span>
+    </div>
+  </section>
+
+  <div class="chart-wrap">
+    <div id="chart"></div>
+    <div id="chartLoading" class="chart-loading">carico il grafico…</div>
+  </div>
+
+  <nav class="ranges" id="ranges">
+    <button class="range" data-range="1G">1G</button>
+    <button class="range" data-range="1S">1S</button>
+    <button class="range" data-range="1M">1M</button>
+    <button class="range is-active" data-range="TUTTO">Tutto</button>
+  </nav>
+
+  <section class="block">
+    <h2>Posizioni</h2>
+    <div id="positions" class="positions"></div>
+  </section>
+
+  <section class="block">
+    <h2>Operazioni</h2>
+    <div id="trades" class="trades"></div>
+  </section>
+
+  <footer class="status">
+    <span id="statusDot" class="status-dot"></span>
+    <span id="statusText">connessione…</span>
+  </footer>
+</main>
+
+<!-- ============ IMPOSTAZIONI ============ -->
+<div id="settings" class="sheet" hidden>
+  <div class="sheet-card">
+    <h2>Impostazioni</h2>
+    <dl class="kv">
+      <dt>Dati</dt><dd id="setRepo">—</dd>
+      <dt>Prezzi</dt><dd id="setSource">—</dd>
+      <dt>Ultimo stato del bot</dt><dd id="setUpdated">—</dd>
+    </dl>
+    <button id="reloadBtn" class="btn ghost">Ricarica adesso</button>
+    <button id="forgetBtn" class="btn danger">Dimentica la chiave su questo dispositivo</button>
+    <button id="closeSettings" class="btn ghost">Chiudi</button>
+    <p class="sheet-note">
+      La chiave sta solo in questo browser. Il portafoglio è in simulazione: soldi finti, nessun rischio.
+    </p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="js/config.js?v=1"></script>
+<script src="js/gate.js?v=1"></script>
+<script src="js/github.js?v=1"></script>
+<script src="js/prices.js?v=1"></script>
+<script src="js/equity.js?v=1"></script>
+<script src="js/chart.js?v=1"></script>
+<script src="js/app.js?v=1"></script>
+</body>
+</html>
