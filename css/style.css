@@ -13,6 +13,11 @@
   --red: #ff5f5f;
   --accent: #4c7dff;
   --radius: 16px;
+  --content-width: 520px; /* più largo su tablet/desktop, vedi il media query più sotto */
+}
+
+@media (min-width: 640px) {
+  :root { --content-width: 720px; }
 }
 
 * { box-sizing: border-box; }
@@ -31,7 +36,7 @@ body {
 }
 
 main {
-  max-width: 520px;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 0 16px 32px;
 }
@@ -308,7 +313,7 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 
 .sheet-card {
   width: 100%;
-  max-width: 520px;
+  max-width: var(--content-width);
   background: var(--card);
   border-top-left-radius: 22px;
   border-top-right-radius: 22px;
@@ -401,13 +406,17 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 
 .bottombar {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: 50%;
   bottom: 0;
+  width: 100%;
+  max-width: var(--content-width); /* altrimenti su schermo largo si allarga a tutta la finestra */
+  transform: translateX(-50%);
   z-index: 40; /* sotto al foglio impostazioni (50) */
   display: flex;
   background: var(--card);
   border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
   padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
 }
 
