@@ -1,18 +1,18 @@
 /* ============================================================
    Il grafico dell'andamento (libreria Lightweight Charts di TradingView).
 
-   Una sola area: il valore del portafoglio nel tempo. Verde se il
-   periodo mostrato è in guadagno, rosso se in perdita.
-   Toccando il grafico si "scorre" nel tempo e il numero grande in
-   alto mostra quanto valeva in quel momento.
+   Una sola area: il valore nel tempo. Verde se il periodo mostrato è
+   in guadagno, rosso se in perdita. Toccando il grafico si "scorre"
+   nel tempo e il numero grande in alto mostra quanto valeva lì.
+
+   `Chart.create()` è una FABBRICA: ogni chiamata restituisce un
+   grafico indipendente, con la propria serie e i propri dati. Serve
+   perché la Home ne usa uno per l'equity, e la pagina Confronto ne
+   apre altri due (uno per BTC, uno per ETH) — tre grafici vivi nella
+   stessa pagina, ognuno con la sua storia, senza pestarsi i piedi.
    ============================================================ */
 
 const Chart = (() => {
-  let chart = null;
-  let series = null;
-  let box = null;
-  let onScrub = () => {};
-
   const COLORS = {
     up: { line: "#21c77a", top: "rgba(33,199,122,.28)", bottom: "rgba(33,199,122,0)" },
     down: { line: "#ff5f5f", top: "rgba(255,95,95,.24)", bottom: "rgba(255,95,95,0)" },
@@ -20,16 +20,16 @@ const Chart = (() => {
 
   // La libreria è alla versione 5, ma teniamo la compatibilità con la 4:
   // cambia solo il modo di aggiungere la serie.
-  function addArea(options) {
+  function addArea(chart, options) {
     if (typeof chart.addAreaSeries === "function") return chart.addAreaSeries(options);
     return chart.addSeries(LightweightCharts.AreaSeries, options);
   }
 
   function create(element, handlers) {
-    box = element;
-    onScrub = (handlers && handlers.onScrub) || onScrub;
+    const box = element;
+    const onScrub = (handlers && handlers.onScrub) || (() => {});
 
-    chart = LightweightCharts.createChart(element, {
+    const chart = LightweightCharts.createChart(element, {
       width: element.clientWidth,
       height: element.clientHeight || 210,
       autoSize: false,
@@ -72,7 +72,7 @@ const Chart = (() => {
       },
     });
 
-    series = addArea({
+    let series = addArea(chart, {
       lineWidth: 2,
       lineColor: COLORS.up.line,
       topColor: COLORS.up.top,
@@ -96,27 +96,32 @@ const Chart = (() => {
     } else {
       window.addEventListener("resize", () => chart.applyOptions({ width: box.clientWidth }));
     }
+
+    function setData(points) {
+      const first = points.length ? points[0].value : 0;
+      const last = points.length ? points[points.length - 1].value : 0;
+      const palette = last >= first ? COLORS.up : COLORS.down;
+      series.applyOptions({
+        lineColor: palette.line,
+        topColor: palette.top,
+        bottomColor: palette.bottom,
+      });
+      series.setData(points);
+      chart.timeScale().fitContent();
+    }
+
+    // Sposta solo l'ultimo punto: è quello che pulsa col prezzo.
+    function updateLast(time, value) {
+      series.update({ time, value: Math.round(value * 100) / 100 });
+    }
+
+    function destroy() {
+      chart.remove();
+      series = null;
+    }
+
+    return { setData, updateLast, destroy, get ready() { return !!series; } };
   }
 
-  function setData(points) {
-    if (!series) return;
-    const first = points.length ? points[0].value : 0;
-    const last = points.length ? points[points.length - 1].value : 0;
-    const palette = last >= first ? COLORS.up : COLORS.down;
-    series.applyOptions({
-      lineColor: palette.line,
-      topColor: palette.top,
-      bottomColor: palette.bottom,
-    });
-    series.setData(points);
-    chart.timeScale().fitContent();
-  }
-
-  // Sposta solo l'ultimo punto: è quello che pulsa col prezzo.
-  function updateLast(time, value) {
-    if (!series) return;
-    series.update({ time, value: Math.round(value * 100) / 100 });
-  }
-
-  return { create, setData, updateLast, get ready() { return !!series; } };
+  return { create };
 })();

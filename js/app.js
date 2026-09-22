@@ -20,6 +20,7 @@ const App = (() => {
     setSource: document.getElementById("setSource"),
     setUpdated: document.getElementById("setUpdated"),
     setRate: document.getElementById("setRate"),
+    summary: document.getElementById("homeSummary"),
   };
 
   const NAMES = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana", XRP: "XRP", ADA: "Cardano" };
@@ -36,14 +37,14 @@ const App = (() => {
   let flashTimer = null;
   let lastCardsPaint = 0;
   let tradesSignature = null;
+  let homeChart = null;
 
   const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
   const nameOf = (pair) => NAMES[Sym.base(pair)] || Sym.base(pair);
 
   // Il bot tiene i conti in USDT: a schermo mostriamo tutto in euro,
-  // convertito al cambio del momento. Le percentuali non cambiano mai,
-  // perché il cambio si semplifica tra numeratore e denominatore.
-  const eur = (usdt) => usdt * Prices.eurRate;
+  // convertito al cambio del momento (condiviso con le altre pagine).
+  const eur = Currency.eur;
 
   /* ---------------- avvio ---------------- */
 
@@ -54,7 +55,7 @@ const App = (() => {
     const ok = await refreshState();
     if (!ok) return;
 
-    Chart.create(el.chart, { onScrub: handleScrub });
+    homeChart = Chart.create(el.chart, { onScrub: handleScrub });
 
     Prices.start(symbols(), {
       onTick: schedulePaint,
@@ -68,6 +69,7 @@ const App = (() => {
     setInterval(renderStatus, 30 * 1000);
 
     wireButtons();
+    Router.init("home");
     paint();
   }
 
@@ -85,7 +87,8 @@ const App = (() => {
       const res = await GitHub.load(token);
       const changed = res.changed;
       state = res.state;
-      if (changed && Chart.ready) loadSeries();
+      Alerts.checkNewTrade(state);
+      if (changed && homeChart && homeChart.ready) loadSeries();
       schedulePaint();
       renderStatus();
       return true;
@@ -102,7 +105,7 @@ const App = (() => {
   /* ---------------- grafico ---------------- */
 
   async function loadSeries() {
-    if (!state || !Chart.ready) return;
+    if (!state || !homeChart || !homeChart.ready) return;
     const { from, interval } = Equity.view(state, range);
 
     const candles = {};
@@ -120,7 +123,7 @@ const App = (() => {
 
     rangeFirstValue = seriesData[0].value;
     lastPointTime = seriesData[seriesData.length - 1].time;
-    Chart.setData(seriesData);
+    homeChart.setData(seriesData);
     const carico = document.getElementById("chartLoading");
     if (carico) carico.hidden = true;
     paint();
@@ -149,7 +152,7 @@ const App = (() => {
 
     // Il numero grande e il grafico seguono ogni singolo tick.
     renderHero(live);
-    if (lastPointTime && Chart.ready && !scrub) Chart.updateLast(lastPointTime, eur(live));
+    if (lastPointTime && homeChart && homeChart.ready && !scrub) homeChart.updateLast(lastPointTime, eur(live));
 
     // Le card costano di più da ridisegnare: bastano due volte al secondo,
     // altrimenti su telefono si scatterebbe inutilmente a ogni scambio.
@@ -157,6 +160,7 @@ const App = (() => {
     if (adesso - lastCardsPaint > 500) {
       lastCardsPaint = adesso;
       renderPositions(prices);
+      renderSummary(prices);
     }
 
     // Le operazioni cambiano solo quando il bot opera: si ridisegnano solo allora.
@@ -256,6 +260,38 @@ const App = (() => {
         .join("") + cash;
   }
 
+  // Riepilogo in cima alla Home: pochi numeri chiave, il dettaglio sta in Statistiche.
+  function renderSummary(prices) {
+    if (!el.summary) return;
+
+    const trades = state.trades || [];
+    const lastTrade = trades.length ? trades[trades.length - 1] : null;
+    let daysLine = "Il bot non ha ancora operato.";
+    if (lastTrade) {
+      const days = Math.floor((Date.now() - new Date(lastTrade.time).getTime()) / 86400000);
+      daysLine = days <= 0 ? "Ha operato oggi" : days === 1 ? "1 giorno senza operare" : `${days} giorni senza operare`;
+    }
+
+    const closed = Stats.closedTrades(state);
+    const wins = closed.filter((c) => c.pl > 0).length;
+    const closedLine = closed.length
+      ? `${closed.length} operazion${closed.length === 1 ? "e chiusa" : "i chiuse"} · ${wins} in guadagno`
+      : "Nessuna operazione chiusa: il bot tiene tutto da quando è partito.";
+
+    const live = Equity.now(state, prices);
+    const bh = Stats.buyAndHold(state, prices);
+    const vsBh = live - bh.value;
+    const vsLine = `${vsBh >= 0 ? "Meglio" : "Peggio"} di ${Fmt.money(eur(Math.abs(vsBh)))} ${CONFIG.display} rispetto a comprare e tenere`;
+
+    el.summary.innerHTML = `
+      <div class="summary-card">
+        <div class="summary-row">${esc(daysLine)}</div>
+        <div class="summary-row">${esc(closedLine)}</div>
+        <div class="summary-row ${vsBh >= 0 ? "up" : "down"}">${esc(vsLine)}</div>
+        <a href="#" class="summary-link" data-nav="stats">Vedi tutte le statistiche →</a>
+      </div>`;
+  }
+
   function renderTrades() {
     const trades = (state.trades || []).slice().reverse().slice(0, 8);
     if (!trades.length) {
@@ -263,10 +299,11 @@ const App = (() => {
       return;
     }
 
-    el.trades.innerHTML = trades
-      .map((t) => {
-        const buy = t.side === "BUY";
-        return `
+    el.trades.innerHTML =
+      trades
+        .map((t) => {
+          const buy = t.side === "BUY";
+          return `
         <div class="trade">
           <div class="trade-side ${buy ? "buy" : "sell"}">${buy ? "↓" : "↑"}</div>
           <div class="trade-main">
@@ -275,8 +312,8 @@ const App = (() => {
           </div>
           <div class="trade-val">${Fmt.money(eur(t.value))}</div>
         </div>`;
-      })
-      .join("");
+        })
+        .join("") + `<a href="#" class="see-all" data-nav="history">Vedi tutte le operazioni →</a>`;
   }
 
   function renderStatus() {
@@ -340,10 +377,16 @@ const App = (() => {
         Gate.forget();
       }
     });
+
+    // La Home è essa stessa una "pagina" del router: nessun lavoro in più
+    // quando si torna qui, disegna già tutto da sola tramite paint().
+    Router.register("home", "view-home", () => {});
   }
 
   return {
     start,
+    // Stato del bot, letto dalle altre pagine (Storico, Statistiche, Confronto).
+    getState: () => state,
     // Sportello per l'ispezione dalla console (utile in fase di prova).
     get debug() {
       return { state, seriesData, range, lastPointTime };

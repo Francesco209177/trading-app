@@ -15,6 +15,18 @@ Gli importi sono mostrati in **euro**, convertiti al cambio del momento: il bot 
 USDT, quindi le **percentuali sono identiche** ma le cifre in euro possono differire dal resoconto
 su Telegram. Il cambio usato è sempre visibile nelle Impostazioni.
 
+## Le pagine
+
+Una barra in basso porta a 5 sezioni, tutte dentro la stessa pagina (nessuna ricarica):
+
+| Pagina | Cosa mostra |
+|---|---|
+| **Home** | Il dashboard di sempre: valore live, grafico, posizioni, ultime operazioni, più un piccolo riepilogo statistiche in cima. |
+| **Storico** | Tutte le operazioni del bot, filtrabili per moneta. |
+| **Statistiche** | Operazioni chiuse e il loro guadagno realizzato, giorno migliore e peggiore, confronto con "se avesse solo comprato e tenuto senza mai più toccare nulla". |
+| **Confronto** | BTC ed ETH separati, ognuno col proprio grafico di prezzo e la propria posizione. |
+| **Come funziona** | Spiega in parole semplici la strategia del bot (nessun dato live, si apre anche offline). |
+
 ---
 
 ## Come funziona
@@ -100,15 +112,21 @@ poi apri `http://127.0.0.1:8123`. Serve un server (anche questo basta): aprendo 
 ## I file
 
 ```
-index.html                 le due schermate: richiesta chiave e app
+index.html                 richiesta chiave + le 5 pagine dell'app
 css/style.css              tema scuro, pensato prima per il telefono
 js/config.js               repo, coppie, formattazione dei numeri all'italiana
 js/gate.js                 la porta: chiave, salvataggio, "dimentica chiave"
 js/github.js               lettura di portfolio.json dal repo privato (con ETag)
 js/prices.js               tick dal vivo (Binance, ricaduta su Kraken) e candele storiche
-js/equity.js               tutti i conti: valore, P&L, ricostruzione della curva
-js/chart.js                il grafico
-js/app.js                  mette insieme le cose e disegna
+js/equity.js               i conti dell'equity: valore, P&L, ricostruzione della curva
+js/currency.js             conversione USDT → euro, condivisa da tutte le pagine
+js/chart.js                fabbrica di grafici (ogni pagina che ne apre uno ha il proprio)
+js/router.js               cambia pagina senza ricaricare, tiene la barra in basso allineata
+js/stats.js                i calcoli di Statistiche: operazioni chiuse, giorni, confronto
+js/history.js              la pagina Storico
+js/view-stats.js           la pagina Statistiche (disegna i numeri di js/stats.js)
+js/compare.js              la pagina Confronto BTC/ETH
+js/app.js                  Home: mette insieme le cose e disegna
 sw.js                      apertura istantanea offline (solo il guscio, mai i dati)
 manifest.webmanifest       nome e icone per l'installazione sul telefono
 ```

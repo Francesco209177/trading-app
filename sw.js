@@ -7,19 +7,27 @@
    La chiave non passa di qui e non viene mai salvata.
    ============================================================ */
 
-const CACHE = "portafoglio-bot-v2";
+const CACHE = "portafoglio-bot-v3";
 
 const SHELL = [
   "./",
   "./index.html",
-  "./css/style.css?v=2",
-  "./js/config.js?v=2",
-  "./js/gate.js?v=2",
-  "./js/github.js?v=2",
-  "./js/prices.js?v=2",
-  "./js/equity.js?v=2",
-  "./js/chart.js?v=2",
-  "./js/app.js?v=2",
+  "./css/style.css?v=3",
+  "./js/config.js?v=3",
+  "./js/gate.js?v=3",
+  "./js/github.js?v=3",
+  "./js/prices.js?v=3",
+  "./js/equity.js?v=3",
+  "./js/currency.js?v=3",
+  "./js/chart.js?v=3",
+  "./js/router.js?v=3",
+  "./js/stats.js?v=3",
+  "./js/history.js?v=3",
+  "./js/view-stats.js?v=3",
+  "./js/compare.js?v=3",
+  "./js/alerts.js?v=3",
+  "./js/install.js?v=3",
+  "./js/app.js?v=3",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",

@@ -9,9 +9,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
+
+<!-- ============ AVVISI (nuova operazione, invito a installare) ============ -->
+<div id="banners" class="banners"></div>
 
 <!-- ============ SCHERMATA CHIAVE (finché non c'è la chiave, esiste solo questa) ============ -->
 <div id="gate" class="gate">
@@ -51,41 +54,146 @@
     <button id="settingsBtn" class="icon-btn" aria-label="Impostazioni">⋯</button>
   </header>
 
-  <section class="hero">
-    <div class="hero-label" id="heroLabel">Valore del portafoglio</div>
-    <div class="equity" id="equity">—</div>
-    <div class="deltas">
-      <span class="delta" id="deltaDay">—</span>
-      <span class="delta muted" id="deltaTotal">—</span>
-    </div>
-  </section>
+  <!-- ---------- HOME ---------- -->
+  <div id="view-home" class="view">
+    <section class="hero">
+      <div class="hero-label" id="heroLabel">Valore del portafoglio</div>
+      <div class="equity" id="equity">—</div>
+      <div class="deltas">
+        <span class="delta" id="deltaDay">—</span>
+        <span class="delta muted" id="deltaTotal">—</span>
+      </div>
+    </section>
 
-  <div class="chart-wrap">
-    <div id="chart"></div>
-    <div id="chartLoading" class="chart-loading">carico il grafico…</div>
+    <div class="chart-wrap">
+      <div id="chart"></div>
+      <div id="chartLoading" class="chart-loading">carico il grafico…</div>
+    </div>
+
+    <nav class="ranges" id="ranges">
+      <button class="range" data-range="1G">1G</button>
+      <button class="range" data-range="1S">1S</button>
+      <button class="range" data-range="1M">1M</button>
+      <button class="range is-active" data-range="TUTTO">Tutto</button>
+    </nav>
+
+    <section class="block" id="homeSummary"></section>
+
+    <section class="block">
+      <h2>Posizioni</h2>
+      <div id="positions" class="positions"></div>
+    </section>
+
+    <section class="block">
+      <h2>Operazioni</h2>
+      <div id="trades" class="trades"></div>
+    </section>
+
+    <footer class="status">
+      <span id="statusDot" class="status-dot"></span>
+      <span id="statusText">connessione…</span>
+    </footer>
   </div>
 
-  <nav class="ranges" id="ranges">
-    <button class="range" data-range="1G">1G</button>
-    <button class="range" data-range="1S">1S</button>
-    <button class="range" data-range="1M">1M</button>
-    <button class="range is-active" data-range="TUTTO">Tutto</button>
+  <!-- ---------- STORICO ---------- -->
+  <div id="view-history" class="view" hidden>
+    <h1 class="page-title">Storico</h1>
+    <nav class="ranges" id="historyFilter">
+      <button class="range is-active" data-filter="TUTTE">Tutte</button>
+      <button class="range" data-filter="BTC">BTC</button>
+      <button class="range" data-filter="ETH">ETH</button>
+    </nav>
+    <div id="historyList" class="trades"></div>
+  </div>
+
+  <!-- ---------- STATISTICHE ---------- -->
+  <div id="view-stats" class="view" hidden>
+    <h1 class="page-title">Statistiche</h1>
+    <div id="statsContent"></div>
+  </div>
+
+  <!-- ---------- CONFRONTO BTC/ETH ---------- -->
+  <div id="view-compare" class="view" hidden>
+    <h1 class="page-title">Confronto</h1>
+    <div class="compare-card">
+      <h2>Bitcoin</h2>
+      <div id="chartBtc" class="mini-chart"></div>
+      <div id="compareBtcInfo" class="compare-info"></div>
+    </div>
+    <div class="compare-card">
+      <h2>Ethereum</h2>
+      <div id="chartEth" class="mini-chart"></div>
+      <div id="compareEthInfo" class="compare-info"></div>
+    </div>
+  </div>
+
+  <!-- ---------- COME FUNZIONA ---------- -->
+  <div id="view-about" class="view" hidden>
+    <h1 class="page-title">Come funziona</h1>
+    <div class="prose">
+      <p>
+        Il bot fa trading in <b>simulazione</b>: nessun euro vero, nessun exchange reale.
+        Ogni giorno guarda i prezzi di Bitcoin ed Ethereum e decide da solo se comprare,
+        vendere o restare fermo, seguendo sempre la stessa strategia — senza emozioni,
+        senza fretta.
+      </p>
+
+      <h3>La strategia: incrocio di medie mobili</h3>
+      <p>
+        Ogni giorno calcola due medie del prezzo: una "veloce" sugli ultimi 20 giorni e una
+        "lenta" sugli ultimi 50. Quando la veloce sale sopra la lenta, il trend è considerato
+        rialzista e il bot compra. Quando la veloce scende sotto la lenta, il trend si considera
+        girato e il bot vende. È una strategia "tranquilla": segue il trend, non cerca di
+        indovinare i minimi e i massimi.
+      </p>
+
+      <h3>Quanto rischia per volta</h3>
+      <ul>
+        <li>Ogni posizione usa il <b>25%</b> del capitale — due posizioni aperte (BTC ed ETH) tengono quindi metà del capitale investito e metà liquido.</li>
+        <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dalle medie mobili.</li>
+        <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
+        <li>Ogni operazione paga una commissione simulata dello <b>0,1%</b>, la stessa di un exchange vero.</li>
+      </ul>
+
+      <h3>Perché ci mette così tanto a decidere</h3>
+      <p>
+        Le medie mobili sono calcolate su base giornaliera: servono giorni, non minuti, per
+        cambiare direzione. Per questo il bot può restare fermo sulle stesse posizioni per
+        settimane — non è pigrizia, è la strategia che funziona così.
+      </p>
+
+      <h3>Cosa mostra questa app</h3>
+      <p>
+        Solo uno specchio: legge lo stato vero del bot e i prezzi veri del mercato, e ricalcola
+        il valore del portafoglio in tempo reale. Non decide niente al posto del bot e non si
+        può comprare o vendere da qui.
+      </p>
+    </div>
+  </div>
+
+  <!-- ---------- BARRA DI NAVIGAZIONE ---------- -->
+  <nav class="bottombar" id="bottombar">
+    <button class="navbtn is-active" data-view="home" aria-label="Home">
+      <svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h5v-6h2v6h5v-9"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="navbtn" data-view="history" aria-label="Storico">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 2"/></svg>
+      <span>Storico</span>
+    </button>
+    <button class="navbtn" data-view="stats" aria-label="Statistiche">
+      <svg viewBox="0 0 24 24"><path d="M5 19V11"/><path d="M12 19V5"/><path d="M19 19v-6"/></svg>
+      <span>Statistiche</span>
+    </button>
+    <button class="navbtn" data-view="compare" aria-label="Confronto">
+      <svg viewBox="0 0 24 24"><circle cx="9.2" cy="12" r="6.2"/><circle cx="14.8" cy="12" r="6.2"/></svg>
+      <span>Confronto</span>
+    </button>
+    <button class="navbtn" data-view="about" aria-label="Come funziona">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 11v5.2"/><circle cx="12" cy="7.8" r="0.6" fill="currentColor" stroke="none"/></svg>
+      <span>Info</span>
+    </button>
   </nav>
-
-  <section class="block">
-    <h2>Posizioni</h2>
-    <div id="positions" class="positions"></div>
-  </section>
-
-  <section class="block">
-    <h2>Operazioni</h2>
-    <div id="trades" class="trades"></div>
-  </section>
-
-  <footer class="status">
-    <span id="statusDot" class="status-dot"></span>
-    <span id="statusText">connessione…</span>
-  </footer>
 </main>
 
 <!-- ============ IMPOSTAZIONI ============ -->
@@ -110,12 +218,20 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=2"></script>
-<script src="js/gate.js?v=2"></script>
-<script src="js/github.js?v=2"></script>
-<script src="js/prices.js?v=2"></script>
-<script src="js/equity.js?v=2"></script>
-<script src="js/chart.js?v=2"></script>
-<script src="js/app.js?v=2"></script>
+<script src="js/config.js?v=3"></script>
+<script src="js/gate.js?v=3"></script>
+<script src="js/github.js?v=3"></script>
+<script src="js/prices.js?v=3"></script>
+<script src="js/equity.js?v=3"></script>
+<script src="js/currency.js?v=3"></script>
+<script src="js/chart.js?v=3"></script>
+<script src="js/router.js?v=3"></script>
+<script src="js/stats.js?v=3"></script>
+<script src="js/history.js?v=3"></script>
+<script src="js/view-stats.js?v=3"></script>
+<script src="js/compare.js?v=3"></script>
+<script src="js/alerts.js?v=3"></script>
+<script src="js/install.js?v=3"></script>
+<script src="js/app.js?v=3"></script>
 </body>
 </html>
