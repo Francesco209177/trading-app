@@ -1,5 +1,5 @@
 {
-  "name": "Portafoglio Bot",
+  "name": "Portafoglio",
   "short_name": "Portafoglio",
   "description": "Il portafoglio del trading bot, in tempo reale.",
   "start_url": "./",
