@@ -30,7 +30,7 @@ const Alerts = (() => {
     const eur = Currency.eur;
     const testo =
       nuove.length === 1
-        ? `Il bot ha ${nuove[0].side === "BUY" ? "comprato" : "venduto"} ${Sym.base(nuove[0].symbol)} a ${Fmt.price(eur(nuove[0].price))}`
+        ? `Il bot ha ${nuove[0].side === "BUY" ? "comprato" : "venduto"} ${Sym.base(nuove[0].symbol)} a ${Fmt.price(eur(nuove[0].price))} ${CONFIG.display}`
         : `Il bot ha fatto ${nuove.length} operazioni nuove`;
 
     const el = document.createElement("div");

@@ -15,6 +15,7 @@ const Gate = (() => {
   const input = document.getElementById("tokenInput");
   const btn = document.getElementById("gateBtn");
   const errBox = document.getElementById("gateError");
+  const demoBtn = document.getElementById("demoBtn");
 
   let onReady = () => {};
 
@@ -88,6 +89,8 @@ const Gate = (() => {
   function init(callback) {
     onReady = callback;
     form.addEventListener("submit", submit);
+    // La demo non salva niente: chiudendo la pagina si torna qui.
+    demoBtn.addEventListener("click", () => enter(Demo.TOKEN));
 
     const saved = read();
     if (saved) enter(saved);

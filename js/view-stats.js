@@ -28,7 +28,7 @@ const StatsView = (() => {
         const pct = (Math.abs(v) / maxAbs) * 46; // lascia margine sopra/sotto la linea dello zero
         const cls = v >= 0 ? "up" : "down";
         const label = new Date(c.exitTime).toLocaleDateString("it-IT", { day: "2-digit", month: "short" });
-        return `<div class="pl-col" title="${esc(Sym.base(c.symbol))} · ${esc(Fmt.signed(v))} ${CONFIG.display}">
+        return `<div class="pl-col" title="${esc(Sym.base(c.symbol))} · ${esc(Fmt.signed(v))}&nbsp;${CONFIG.display}">
           <div class="pl-bar ${cls}" style="height:${pct}%"></div>
           <div class="pl-label">${esc(label)}</div>
         </div>`;
@@ -53,8 +53,14 @@ const StatsView = (() => {
     const { best, worst } = Stats.dailyExtremes(state);
     const bh = Stats.buyAndHold(state, prices);
     const vsBh = live - bh.value;
+    const total = live - state.start_equity;
 
     const tiles = [
+      tile(
+        "Da inizio",
+        `${Fmt.signedCur(eur(total))}<br><small>${Fmt.pct((total / state.start_equity) * 100)}</small>`,
+        total >= 0 ? "up" : "down"
+      ),
       tile(
         "Operazioni chiuse",
         closed.length ? `${closed.length} · ${wins} in guadagno` : "Nessuna ancora",
@@ -62,13 +68,13 @@ const StatsView = (() => {
       ),
       tile(
         "Guadagno realizzato",
-        closed.length ? `${Fmt.signed(eur(realized))} ${CONFIG.display}` : "—",
+        closed.length ? Fmt.signedCur(eur(realized)) : "—",
         realized > 0 ? "up" : realized < 0 ? "down" : ""
       ),
       tile(
         "Rispetto a comprare e tenere",
-        `${Fmt.signed(eur(vsBh))} ${CONFIG.display}`,
-        vsBh >= 0 ? "up" : "down"
+        Stats.versus(vsBh, state.start_equity).small ? `In linea<br><small>${Fmt.signedCur(eur(vsBh))}</small>` : Fmt.signedCur(eur(vsBh)),
+        Stats.versus(vsBh, state.start_equity).cls
       ),
       tile(
         "Giorno migliore",
@@ -92,9 +98,9 @@ const StatsView = (() => {
           <div class="trade-side ${c.pl >= 0 ? "buy" : "sell"}">${c.pl >= 0 ? "↑" : "↓"}</div>
           <div class="trade-main">
             <div class="trade-title">${Sym.base(c.symbol)} · ${Fmt.dateTime(new Date(c.entryTime))} → ${Fmt.dateTime(new Date(c.exitTime))}</div>
-            <div class="trade-sub">${Fmt.price(eur(c.entryPrice))} → ${Fmt.price(eur(c.exitPrice))} (${Fmt.pct(c.plPct)})</div>
+            <div class="trade-sub">${Fmt.price(eur(c.entryPrice))} → ${Fmt.price(eur(c.exitPrice))}&nbsp;${CONFIG.display} (${Fmt.pct(c.plPct)})</div>
           </div>
-          <div class="trade-val ${c.pl >= 0 ? "up" : "down"}">${Fmt.signed(eur(c.pl))}</div>
+          <div class="trade-val ${c.pl >= 0 ? "up" : "down"}">${Fmt.signedCur(eur(c.pl))}</div>
         </div>`
           )
           .join("")
@@ -107,8 +113,8 @@ const StatsView = (() => {
       ${closedRows}
       <p class="stat-note">
         "Comprare e tenere" = se il bot avesse comprato le prime quantità di BTC ed ETH
-        il primo giorno e non avesse più toccato nulla, ignorando il ribilanciamento del
-        26 agosto. Serve a capire se muoversi ha aiutato o no.
+        il primo giorno e non avesse più toccato nulla. Serve a capire se muoversi ha
+        aiutato o no.
       </p>
     `;
   }

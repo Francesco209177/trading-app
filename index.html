@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -32,6 +32,8 @@
       <button type="submit" id="gateBtn">Entra</button>
     </form>
     <p id="gateError" class="gate-error" hidden></p>
+    <div class="gate-or"><span>oppure</span></div>
+    <button type="button" id="demoBtn" class="btn ghost">Guarda la demo con dati di esempio</button>
     <details class="gate-help">
       <summary>Come si crea la chiave</summary>
       <ol>
@@ -147,6 +149,12 @@
         indovinare i minimi e i massimi.
       </p>
 
+      <h3>Quando controlla</h3>
+      <ul>
+        <li><b>Alle 8 di ogni mattina</b> fa l'analisi completa: decide se comprare o vendere e manda il resoconto su Telegram e per email.</li>
+        <li><b>Ogni ora</b> controlla solo lo stop-loss: se scatta vende subito e ti avvisa. Non compra mai durante il giorno.</li>
+      </ul>
+
       <h3>Quanto rischia per volta</h3>
       <ul>
         <li>Ogni posizione usa il <b>25%</b> del capitale — due posizioni aperte (BTC ed ETH) tengono quindi metà del capitale investito e metà liquido.</li>
@@ -163,6 +171,11 @@
       </p>
 
       <h3>Cosa mostra questa app</h3>
+      <p>
+        In Home, sotto ogni moneta, vedi a che prezzo scatterebbe lo stop-loss e cosa dicono
+        oggi le medie mobili ("resta investito", "venderà alle 8"…). È una stima rifatta qui
+        con gli stessi calcoli del bot: la decisione vera la prende lui alle 8.
+      </p>
       <p>
         Solo uno specchio: legge lo stato vero del bot e i prezzi veri del mercato, e ricalcola
         il valore del portafoglio in tempo reale. Non decide niente al posto del bot e non si
@@ -218,20 +231,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=3"></script>
-<script src="js/gate.js?v=3"></script>
-<script src="js/github.js?v=3"></script>
-<script src="js/prices.js?v=3"></script>
-<script src="js/equity.js?v=3"></script>
-<script src="js/currency.js?v=3"></script>
-<script src="js/chart.js?v=3"></script>
-<script src="js/router.js?v=3"></script>
-<script src="js/stats.js?v=3"></script>
-<script src="js/history.js?v=3"></script>
-<script src="js/view-stats.js?v=3"></script>
-<script src="js/compare.js?v=3"></script>
-<script src="js/alerts.js?v=3"></script>
-<script src="js/install.js?v=3"></script>
-<script src="js/app.js?v=3"></script>
+<script src="js/config.js?v=4"></script>
+<script src="js/gate.js?v=4"></script>
+<script src="js/github.js?v=4"></script>
+<script src="js/prices.js?v=4"></script>
+<script src="js/demo.js?v=4"></script>
+<script src="js/signal.js?v=4"></script>
+<script src="js/equity.js?v=4"></script>
+<script src="js/currency.js?v=4"></script>
+<script src="js/chart.js?v=4"></script>
+<script src="js/router.js?v=4"></script>
+<script src="js/stats.js?v=4"></script>
+<script src="js/history.js?v=4"></script>
+<script src="js/view-stats.js?v=4"></script>
+<script src="js/compare.js?v=4"></script>
+<script src="js/alerts.js?v=4"></script>
+<script src="js/install.js?v=4"></script>
+<script src="js/app.js?v=4"></script>
 </body>
 </html>

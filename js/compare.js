@@ -45,22 +45,35 @@ const Compare = (() => {
       if (!info) return;
 
       const pos = state.positions && state.positions[symbol];
+      const s = Signal.of(symbol);
+      // Le due medie del bot: la distanza dice quanto manca a un incrocio.
+      const medie = s
+        ? `<div class="compare-row">
+             <span>Media ${CONFIG.strategy.fast}g ${Fmt.price(eur(s.fast))} · ${CONFIG.strategy.slow}g ${Fmt.price(eur(s.slow))}&nbsp;${CONFIG.display}</span>
+             <span class="${s.up ? "up" : "down"}">${s.up ? "▲ rialzista" : "▼ ribassista"} (${Fmt.pct(s.gapPct)})</span>
+           </div>`
+        : "";
+
       if (!pos) {
-        info.innerHTML = `<span>Nessuna posizione aperta</span>`;
+        info.innerHTML = `<div class="compare-row"><span>Nessuna posizione aperta</span></div>` + medie;
         return;
       }
       const price = prices[symbol] != null ? prices[symbol] : pos.entry_price;
       const plPct = pos.entry_price ? (price / pos.entry_price - 1) * 100 : 0;
 
       info.innerHTML = `
-        <span>Carico ${Fmt.price(eur(pos.entry_price))} → ${Fmt.price(eur(price))}</span>
-        <span class="${plPct >= 0 ? "up" : "down"}">${Fmt.pct(plPct)}</span>
+        <div class="compare-row">
+          <span>Carico ${Fmt.price(eur(pos.entry_price))} → ${Fmt.price(eur(price))}&nbsp;${CONFIG.display}</span>
+          <span class="${plPct >= 0 ? "up" : "down"}">${Fmt.pct(plPct)}</span>
+        </div>
+        ${medie}
       `;
     });
   }
 
   function enter(alreadyEntered) {
     if (!built) build();
+    if (!Signal.ready) Signal.refresh(Object.keys(boxes)).then(renderInfo);
     if (!alreadyEntered) {
       Object.keys(boxes).forEach(loadChart);
     }

@@ -22,6 +22,8 @@
 
 * { box-sizing: border-box; }
 
+button, input { font-family: inherit; }
+
 html, body {
   margin: 0;
   background: var(--bg);
@@ -583,3 +585,77 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 .prose ul { margin: 0 0 14px; padding-left: 20px; color: var(--text); }
 .prose li { margin-bottom: 8px; }
 .prose b { font-weight: 600; }
+
+/* ================================================================
+   PROTEZIONE E SEGNALE — stop-loss e medie mobili
+   ================================================================ */
+
+.pos { flex-wrap: wrap; }
+
+.pos-guard {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pos-guard b { color: var(--text); font-weight: 600; }
+
+.chip {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 600;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.chip.up { color: var(--green); border-color: rgba(33, 199, 122, .35); background: rgba(33, 199, 122, .08); }
+.chip.down { color: var(--red); border-color: rgba(255, 95, 95, .35); background: rgba(255, 95, 95, .08); }
+
+.summary-k { color: var(--muted); margin-right: 4px; }
+.summary-row b.up { color: var(--green); }
+.summary-row b.down { color: var(--red); }
+
+.compare-info { flex-direction: column; gap: 6px; }
+.compare-row { display: flex; justify-content: space-between; gap: 10px; }
+
+.stat-tile .value small { font-size: .78rem; font-weight: 600; opacity: .85; }
+
+/* le lettere A / V delle operazioni */
+.trade-side { font-weight: 700; font-size: .82rem; }
+.trade-val.up { color: var(--green); }
+.trade-val.down { color: var(--red); }
+
+/* ================================================================
+   DEMO
+   ================================================================ */
+
+.gate-or {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 0 12px;
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.gate-or::before, .gate-or::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+
+#demoBtn { margin-bottom: 0; font-weight: 500; }
+
+.btn.ghost:hover { border-color: var(--accent); }
+
+.banner-demo { background: rgba(240, 180, 41, .14); border-bottom: 1px solid rgba(240, 180, 41, .35); color: #f5cf6b; }
+.banner-demo .dot { background: #f0b429; }
+.banner-demo .banner-action { background: rgba(240, 180, 41, .2); }

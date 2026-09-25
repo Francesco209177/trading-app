@@ -38,6 +38,7 @@ const App = (() => {
   let lastCardsPaint = 0;
   let tradesSignature = null;
   let homeChart = null;
+  let demo = false;
 
   const esc = (s) => String(s).replace(/[<>&"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c]));
   const nameOf = (pair) => NAMES[Sym.base(pair)] || Sym.base(pair);
@@ -50,7 +51,9 @@ const App = (() => {
 
   async function start(key) {
     token = key;
-    el.setRepo.textContent = `${CONFIG.owner}/${CONFIG.repo}`;
+    demo = Demo.is(key);
+    el.setRepo.textContent = demo ? "esempio (demo)" : `${CONFIG.owner}/${CONFIG.repo}`;
+    if (demo) showDemoBanner();
 
     const ok = await refreshState();
     if (!ok) return;
@@ -62,7 +65,12 @@ const App = (() => {
       onStatus: renderStatus,
     });
 
+    // Segnale delle medie: cambia al massimo una volta al giorno, basta rileggerlo ogni mezz'ora.
+    Signal.refresh(symbols()).then(schedulePaint);
+
     await loadSeries();
+
+    setInterval(() => Signal.refresh(symbols()).then(schedulePaint), 30 * 60 * 1000);
 
     setInterval(refreshState, CONFIG.refreshMs);
     setInterval(loadSeries, 5 * 60 * 1000); // nuove candele
@@ -87,7 +95,7 @@ const App = (() => {
       const res = await GitHub.load(token);
       const changed = res.changed;
       state = res.state;
-      Alerts.checkNewTrade(state);
+      if (!demo) Alerts.checkNewTrade(state);
       if (changed && homeChart && homeChart.ready) loadSeries();
       schedulePaint();
       renderStatus();
@@ -202,14 +210,14 @@ const App = (() => {
     }
 
     const total = live - state.start_equity;
-    el.deltaTotal.textContent = `${Fmt.signed(eur(total))} ${CONFIG.display} (${Fmt.pct((total / state.start_equity) * 100)}) da inizio`;
+    el.deltaTotal.textContent = `${Fmt.signed(eur(total))} ${CONFIG.display} (${Fmt.pct((total / state.start_equity) * 100)}) da inizio`;
     el.deltaTotal.className = "delta muted";
 
     flash(eur(live));
   }
 
   function setDelta(node, diff, pct, suffix) {
-    node.textContent = `${Fmt.signed(diff)} ${CONFIG.display} (${Fmt.pct(pct)}) ${suffix}`;
+    node.textContent = `${Fmt.signed(diff)} ${CONFIG.display} (${Fmt.pct(pct)}) ${suffix}`;
     node.className = "delta " + (diff >= 0 ? "up" : "down");
   }
 
@@ -230,7 +238,7 @@ const App = (() => {
     const cash = `
       <div class="cash">
         <span>Liquidità non investita</span>
-        <b>${Fmt.money(eur(state.cash))} ${CONFIG.display}</b>
+        <b>${Fmt.money(eur(state.cash))}&nbsp;${CONFIG.display}</b>
       </div>`;
 
     if (!rows.length) {
@@ -244,16 +252,25 @@ const App = (() => {
         .map((p) => {
           const base = Sym.base(p.symbol);
           const cls = base === "BTC" ? "btc" : base === "ETH" ? "eth" : "other";
+          const stop = Signal.stopPrice(state.positions[p.symbol]);
+          const room = ((p.price - stop) / p.price) * 100;
+          const intent = Signal.intent(p.symbol, true);
           return `
         <div class="pos">
           <div class="pos-icon ${cls}">${esc(base)}</div>
           <div class="pos-main">
             <div class="pos-name">${esc(nameOf(p.symbol))}</div>
-            <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(eur(p.entry))}</div>
+            <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(eur(p.entry))}&nbsp;${CONFIG.display}</div>
           </div>
           <div class="pos-right">
-            <div class="pos-value">${Fmt.money(eur(p.value))}</div>
-            <div class="pos-pl ${p.pl >= 0 ? "up" : "down"}">${Fmt.signed(eur(p.pl))} (${Fmt.pct(p.plPct)})</div>
+            <div class="pos-value">${Fmt.cur(eur(p.value))}</div>
+            <div class="pos-pl ${p.pl >= 0 ? "up" : "down"}">${Fmt.signedCur(eur(p.pl))} (${Fmt.pct(p.plPct)})</div>
+          </div>
+          <div class="pos-guard">
+            <span title="Il bot controlla ogni ora: se il prezzo scende fin qui, vende subito.">
+              Stop-loss a <b>${Fmt.price(eur(stop))}&nbsp;${CONFIG.display}</b> · ${room > 0 ? `scatta se scende del ${Fmt.money(room, 1)}%` : "raggiunto"}
+            </span>
+            ${intent ? `<span class="chip ${intent.cls}">${intent.text}</span>` : ""}
           </div>
         </div>`;
         })
@@ -281,13 +298,29 @@ const App = (() => {
     const live = Equity.now(state, prices);
     const bh = Stats.buyAndHold(state, prices);
     const vsBh = live - bh.value;
-    const vsLine = `${vsBh >= 0 ? "Meglio" : "Peggio"} di ${Fmt.money(eur(Math.abs(vsBh)))} ${CONFIG.display} rispetto a comprare e tenere`;
+    const vs = Stats.versus(vsBh, state.start_equity);
+    const vsLine =
+      vs.cls === ""
+        ? `In linea con "comprare e tenere" (${Fmt.signedCur(eur(vsBh))})`
+        : `${vsBh >= 0 ? "Meglio" : "Peggio"} di ${Fmt.cur(eur(Math.abs(vsBh)))} rispetto a "comprare e tenere"`;
+
+    // Cosa dicono oggi le medie, moneta per moneta.
+    const intents = symbols()
+      .map((pair) => {
+        const it = Signal.intent(pair, !!(state.positions || {})[pair]);
+        return it ? `<b class="${it.cls}">${esc(Sym.base(pair))}</b> ${esc(it.text)}` : null;
+      })
+      .filter(Boolean);
+    const signalRow = intents.length
+      ? `<div class="summary-row"><span class="summary-k">Segnale di oggi</span> ${intents.join(" · ")}</div>`
+      : "";
 
     el.summary.innerHTML = `
       <div class="summary-card">
+        ${signalRow}
         <div class="summary-row">${esc(daysLine)}</div>
         <div class="summary-row">${esc(closedLine)}</div>
-        <div class="summary-row ${vsBh >= 0 ? "up" : "down"}">${esc(vsLine)}</div>
+        <div class="summary-row ${vs.cls}">${esc(vsLine)}</div>
         <a href="#" class="summary-link" data-nav="stats">Vedi tutte le statistiche →</a>
       </div>`;
   }
@@ -305,12 +338,12 @@ const App = (() => {
           const buy = t.side === "BUY";
           return `
         <div class="trade">
-          <div class="trade-side ${buy ? "buy" : "sell"}">${buy ? "↓" : "↑"}</div>
+          <div class="trade-side ${buy ? "buy" : "sell"}" title="${buy ? "Acquisto" : "Vendita"}">${buy ? "A" : "V"}</div>
           <div class="trade-main">
             <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.base(t.symbol))}</div>
-            <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}</div>
+            <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}&nbsp;${CONFIG.display}</div>
           </div>
-          <div class="trade-val">${Fmt.money(eur(t.value))}</div>
+          <div class="trade-val">${Fmt.cur(eur(t.value))}</div>
         </div>`;
         })
         .join("") + `<a href="#" class="see-all" data-nav="history">Vedi tutte le operazioni →</a>`;
@@ -335,15 +368,28 @@ const App = (() => {
     el.setSource.textContent = status === "live" ? Prices.source : "non collegato";
     const snap = state ? Equity.lastSnapshot(state) : null;
     el.setUpdated.textContent = snap
-      ? `${Fmt.dateTime(new Date(snap.time))} · ${Fmt.money(eur(snap.equity))} ${CONFIG.display}`
+      ? `${Fmt.dateTime(new Date(snap.time))} · ${Fmt.money(eur(snap.equity))} ${CONFIG.display}`
       : "—";
 
     // Trasparenza: con quale cambio stiamo convertendo in euro.
     if (el.setRate) {
       el.setRate.textContent =
-        `1 ${CONFIG.quote} = ${Fmt.money(Prices.eurRate, 4)} ${CONFIG.display}` +
+        `1 ${CONFIG.quote} = ${Fmt.money(Prices.eurRate, 4)} ${CONFIG.display}` +
         (Prices.eurRateReady ? "" : " (approssimato)");
     }
+  }
+
+  // In demo lo diciamo sempre, in cima: i numeri sono inventati.
+  function showDemoBanner() {
+    const box = document.getElementById("banners");
+    const b = document.createElement("div");
+    b.className = "banner banner-demo";
+    b.innerHTML =
+      '<span class="dot"></span><span>Demo: portafoglio inventato, prezzi veri.</span>' +
+      '<button class="banner-action" type="button">Esci</button>';
+    b.querySelector("button").addEventListener("click", () => location.reload());
+    box.prepend(b);
+    document.getElementById("forgetBtn").textContent = "Esci dalla demo";
   }
 
   /* ---------------- pulsanti ---------------- */
@@ -373,6 +419,7 @@ const App = (() => {
     });
 
     document.getElementById("forgetBtn").addEventListener("click", () => {
+      if (demo) return location.reload();
       if (confirm("Cancello la chiave da questo dispositivo? Per rientrare dovrai incollarla di nuovo.")) {
         Gate.forget();
       }

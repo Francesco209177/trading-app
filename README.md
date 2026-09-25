@@ -21,10 +21,10 @@ Una barra in basso porta a 5 sezioni, tutte dentro la stessa pagina (nessuna ric
 
 | Pagina | Cosa mostra |
 |---|---|
-| **Home** | Il dashboard di sempre: valore live, grafico, posizioni, ultime operazioni, più un piccolo riepilogo statistiche in cima. |
+| **Home** | Il dashboard di sempre: valore live, grafico, posizioni, ultime operazioni, più un piccolo riepilogo in cima con il **segnale di oggi** ("resta investito", "venderà alle 8"…). Sotto ogni posizione: a che prezzo scatterebbe lo **stop-loss** e quanto manca. |
 | **Storico** | Tutte le operazioni del bot, filtrabili per moneta. |
 | **Statistiche** | Operazioni chiuse e il loro guadagno realizzato, giorno migliore e peggiore, confronto con "se avesse solo comprato e tenuto senza mai più toccare nulla". |
-| **Confronto** | BTC ed ETH separati, ognuno col proprio grafico di prezzo e la propria posizione. |
+| **Confronto** | BTC ed ETH separati, ognuno col proprio grafico di prezzo, la propria posizione e le due **medie mobili** (20 e 50 giorni) con la distanza tra loro. |
 | **Come funziona** | Spiega in parole semplici la strategia del bot (nessun dato live, si apre anche offline). |
 
 ---
@@ -81,7 +81,8 @@ una volta per telefono e una volta per PC.
 
 - La chiave sta **solo** nel `localStorage` del browser dove l'hai incollata. Non è in
   nessun file, non passa nell'indirizzo, non entra nella cache dell'app.
-- Chi apre il link senza chiave vede solo la richiesta della chiave: nessun numero.
+- Chi apre il link senza chiave vede solo la richiesta della chiave, più un pulsante per la
+  **demo**: un portafoglio inventato costruito coi prezzi veri. Nessun dato del bot vero.
 - Se perdi il telefono: GitHub → *Settings* → *Developer settings* → *Fine-grained tokens*
   → **Revoke**. La chiave diventa carta straccia all'istante.
 - Nota: tutti i siti che pubblichi su `<tuo-utente>.github.io` condividono lo stesso
@@ -114,10 +115,12 @@ poi apri `http://127.0.0.1:8123`. Serve un server (anche questo basta): aprendo 
 ```
 index.html                 richiesta chiave + le 5 pagine dell'app
 css/style.css              tema scuro, pensato prima per il telefono
-js/config.js               repo, coppie, formattazione dei numeri all'italiana
+js/config.js               repo, regole del bot (medie, stop-loss), numeri all'italiana
 js/gate.js                 la porta: chiave, salvataggio, "dimentica chiave"
 js/github.js               lettura di portfolio.json dal repo privato (con ETag)
 js/prices.js               tick dal vivo (Binance, ricaduta su Kraken) e candele storiche
+js/demo.js                 la demo per chi non ha la chiave: portafoglio inventato, prezzi veri
+js/signal.js               "cosa farà il bot": medie 20/50 giorni e prezzo dello stop-loss
 js/equity.js               i conti dell'equity: valore, P&L, ricostruzione della curva
 js/currency.js             conversione USDT → euro, condivisa da tutte le pagine
 js/chart.js                fabbrica di grafici (ogni pagina che ne apre uno ha il proprio)

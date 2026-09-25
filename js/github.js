@@ -46,6 +46,7 @@ const GitHub = (() => {
 
   // Usata dalla schermata della chiave: una richiesta di prova.
   async function check(token) {
+    if (Demo.is(token)) return true;
     const res = await fetch(URL_STATE, { headers: headers(token), cache: "no-store" });
     if (!res.ok) throw explain(res.status);
     return true;
@@ -53,6 +54,13 @@ const GitHub = (() => {
 
   // Scarica lo stato. changed=false significa "identico a prima" (304).
   async function load(token) {
+    // Modalità demo: dati inventati, nessuna richiesta a GitHub.
+    if (Demo.is(token)) {
+      const res = await Demo.load();
+      lastFetch = res.at;
+      return res;
+    }
+
     const res = await fetch(URL_STATE, {
       headers: headers(token, etag ? { "If-None-Match": etag } : null),
       cache: "no-store",

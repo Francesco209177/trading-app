@@ -108,5 +108,12 @@ const Stats = (() => {
     return { value: cashLeft + value, cashLeft, positions };
   }
 
-  return { closedTrades, dailyExtremes, buyAndHold };
+  // Differenze minuscole non sono "peggio" o "meglio": sotto lo 0,5% del
+  // capitale iniziale le consideriamo in linea (niente rosso che allarma).
+  function versus(diff, startEquity) {
+    const small = Math.abs(diff) < startEquity * 0.005;
+    return { cls: small ? "" : diff >= 0 ? "up" : "down", small };
+  }
+
+  return { closedTrades, dailyExtremes, buyAndHold, versus };
 })();
