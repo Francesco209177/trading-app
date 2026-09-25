@@ -307,7 +307,7 @@ const App = (() => {
     // Cosa dicono oggi le medie, moneta per moneta.
     const intents = symbols()
       .map((pair) => {
-        const it = Signal.intent(pair, !!(state.positions || {})[pair]);
+        const it = Signal.intent(pair, !!(state.positions || {})[pair], !!(state.stopped || {})[pair]);
         return it ? `<b class="${it.cls}">${esc(Sym.base(pair))}</b> ${esc(it.text)}` : null;
       })
       .filter(Boolean);

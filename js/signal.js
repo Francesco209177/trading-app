@@ -51,10 +51,12 @@ const Signal = (() => {
   }
 
   // Cosa farà alla prossima analisi delle 8, detto a parole.
-  function intent(pair, held) {
+  // stopped = il bot è uscito con lo stop-loss e aspetta un nuovo incrocio.
+  function intent(pair, held, stopped) {
     const s = of(pair);
     if (!s) return null;
     if (held) return s.up ? { text: "resta investito", cls: "up" } : { text: "venderà alle 8", cls: "down" };
+    if (stopped && s.up) return { text: "aspetta un nuovo incrocio", cls: "" };
     return s.up ? { text: "comprerà alle 8", cls: "up" } : { text: "resta fuori", cls: "" };
   }
 

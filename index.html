@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=4">
+<link rel="stylesheet" href="css/style.css?v=5">
 </head>
 <body>
 
@@ -159,8 +159,9 @@
       <ul>
         <li>Ogni nuovo acquisto usa il <b>35%</b> del capitale — con BTC ed ETH entrambi aperti il bot tiene circa il 70% investito e il 30% liquido. (Fino al 25 settembre era il 25%: le posizioni aperte prima restano di quella misura finché il bot non le rivende e ricompra.)</li>
         <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dalle medie mobili.</li>
+        <li><b>Dopo uno stop-loss aspetta</b>: non ricompra finché le medie non si sono incrociate di nuovo (prima al ribasso, poi al rialzo). Così non rientra nello stesso calo che l'ha appena fatto uscire.</li>
         <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
-        <li>Ogni operazione paga una commissione simulata dello <b>0,1%</b>, la stessa di un exchange vero.</li>
+        <li>Ogni operazione paga una commissione simulata dello <b>0,4%</b>, quella vera di Kraken per un conto piccolo (fino al 25 settembre era lo 0,1%, troppo ottimista).</li>
       </ul>
 
       <h3>Perché ci mette così tanto a decidere</h3>
@@ -231,22 +232,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=4"></script>
-<script src="js/gate.js?v=4"></script>
-<script src="js/github.js?v=4"></script>
-<script src="js/prices.js?v=4"></script>
-<script src="js/demo.js?v=4"></script>
-<script src="js/signal.js?v=4"></script>
-<script src="js/equity.js?v=4"></script>
-<script src="js/currency.js?v=4"></script>
-<script src="js/chart.js?v=4"></script>
-<script src="js/router.js?v=4"></script>
-<script src="js/stats.js?v=4"></script>
-<script src="js/history.js?v=4"></script>
-<script src="js/view-stats.js?v=4"></script>
-<script src="js/compare.js?v=4"></script>
-<script src="js/alerts.js?v=4"></script>
-<script src="js/install.js?v=4"></script>
-<script src="js/app.js?v=4"></script>
+<script src="js/config.js?v=5"></script>
+<script src="js/gate.js?v=5"></script>
+<script src="js/github.js?v=5"></script>
+<script src="js/prices.js?v=5"></script>
+<script src="js/demo.js?v=5"></script>
+<script src="js/signal.js?v=5"></script>
+<script src="js/equity.js?v=5"></script>
+<script src="js/currency.js?v=5"></script>
+<script src="js/chart.js?v=5"></script>
+<script src="js/router.js?v=5"></script>
+<script src="js/stats.js?v=5"></script>
+<script src="js/history.js?v=5"></script>
+<script src="js/view-stats.js?v=5"></script>
+<script src="js/compare.js?v=5"></script>
+<script src="js/alerts.js?v=5"></script>
+<script src="js/install.js?v=5"></script>
+<script src="js/app.js?v=5"></script>
 </body>
 </html>
