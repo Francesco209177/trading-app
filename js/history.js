@@ -26,7 +26,7 @@ const History = (() => {
       .reverse();
 
     if (!trades.length) {
-      el.list.innerHTML = `<p class="empty">Nessuna operazione${filter === "TUTTE" ? "" : " su " + filter}.</p>`;
+      el.list.innerHTML = `<p class="empty">Nessuna operazione${filter === "TUTTE" ? "" : " su " + Sym.short(filter + "/")}.</p>`;
       return;
     }
 
@@ -37,7 +37,7 @@ const History = (() => {
         <div class="trade">
           <div class="trade-side ${buy ? "buy" : "sell"}" title="${buy ? "Acquisto" : "Vendita"}">${buy ? "A" : "V"}</div>
           <div class="trade-main">
-            <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.base(t.symbol))}</div>
+            <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.short(t.symbol))}</div>
             <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}&nbsp;${CONFIG.display}</div>
           </div>
           <div class="trade-val">${Fmt.cur(eur(t.value))}</div>

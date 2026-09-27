@@ -10,6 +10,10 @@ const CONFIG = {
   repo: "trading-bot",
   path: "state/portfolio.json",
 
+  // Le coppie che il bot segue (le stesse di "symbols" in config.yaml):
+  // servono per mostrare prezzi e segnale anche di quelle non ancora comprate.
+  pairs: ["BTC/USDT", "ETH/USDT", "PAXG/USD"],
+
   // Valuta in cui il bot tiene i conti (deve combaciare con config.yaml del bot).
   quote: "USDT",
 
@@ -36,9 +40,16 @@ const CONFIG = {
 const Sym = {
   base: (pair) => pair.split("/")[0],
   quote: (pair) => pair.split("/")[1],
-  binance: (pair) => pair.replace("/", "").toUpperCase(),
+  // Binance non ha coppie in dollari "veri": PAXG/USD lì si chiama PAXGUSDT
+  // (1 USDT ≈ 1 dollaro, per il prezzo non cambia nulla).
+  binance: (pair) => {
+    const [base, quote] = pair.split("/");
+    return (base + (quote === "USD" ? "USDT" : quote)).toUpperCase();
+  },
   krakenWs: (pair) => pair.toUpperCase(),
   krakenRest: (pair) => pair.replace("/", "").replace("BTC", "XBT").toUpperCase(),
+  // Nome breve da mostrare: "BTC", "ETH", e "Oro" invece di PAXG.
+  short: (pair) => ({ PAXG: "Oro" }[pair.split("/")[0]] || pair.split("/")[0]),
 };
 
 /* ------------------------------------------------------------

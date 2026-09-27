@@ -23,7 +23,7 @@ const App = (() => {
     summary: document.getElementById("homeSummary"),
   };
 
-  const NAMES = { BTC: "Bitcoin", ETH: "Ethereum", SOL: "Solana", XRP: "XRP", ADA: "Cardano" };
+  const NAMES = { BTC: "Bitcoin", ETH: "Ethereum", PAXG: "Oro (PAXG)", SOL: "Solana", XRP: "XRP", ADA: "Cardano" };
 
   let token = null;
   let state = null;
@@ -83,7 +83,8 @@ const App = (() => {
 
   // Tutte le coppie che ci interessano: quelle aperte adesso più quelle già tradate.
   function symbols() {
-    const set = new Set(Object.keys(state.positions || {}));
+    const set = new Set(CONFIG.pairs || []);
+    Object.keys(state.positions || {}).forEach((s) => set.add(s));
     (state.trades || []).forEach((t) => set.add(t.symbol));
     return Array.from(set);
   }
@@ -251,13 +252,14 @@ const App = (() => {
       rows
         .map((p) => {
           const base = Sym.base(p.symbol);
-          const cls = base === "BTC" ? "btc" : base === "ETH" ? "eth" : "other";
+          const cls = base === "BTC" ? "btc" : base === "ETH" ? "eth" : base === "PAXG" ? "gold" : "other";
+          const icon = base === "PAXG" ? "Au" : base;
           const stop = Signal.stopPrice(state.positions[p.symbol]);
           const room = ((p.price - stop) / p.price) * 100;
           const intent = Signal.intent(p.symbol, true);
           return `
         <div class="pos">
-          <div class="pos-icon ${cls}">${esc(base)}</div>
+          <div class="pos-icon ${cls}">${esc(icon)}</div>
           <div class="pos-main">
             <div class="pos-name">${esc(nameOf(p.symbol))}</div>
             <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(eur(p.entry))}&nbsp;${CONFIG.display}</div>
@@ -308,7 +310,7 @@ const App = (() => {
     const intents = symbols()
       .map((pair) => {
         const it = Signal.intent(pair, !!(state.positions || {})[pair], !!(state.stopped || {})[pair]);
-        return it ? `<b class="${it.cls}">${esc(Sym.base(pair))}</b> ${esc(it.text)}` : null;
+        return it ? `<b class="${it.cls}">${esc(Sym.short(pair))}</b> ${esc(it.text)}` : null;
       })
       .filter(Boolean);
     const signalRow = intents.length
@@ -340,7 +342,7 @@ const App = (() => {
         <div class="trade">
           <div class="trade-side ${buy ? "buy" : "sell"}" title="${buy ? "Acquisto" : "Vendita"}">${buy ? "A" : "V"}</div>
           <div class="trade-main">
-            <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.base(t.symbol))}</div>
+            <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.short(t.symbol))}</div>
             <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}&nbsp;${CONFIG.display}</div>
           </div>
           <div class="trade-val">${Fmt.cur(eur(t.value))}</div>

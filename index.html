@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 
@@ -104,6 +104,7 @@
       <button class="range is-active" data-filter="TUTTE">Tutte</button>
       <button class="range" data-filter="BTC">BTC</button>
       <button class="range" data-filter="ETH">ETH</button>
+      <button class="range" data-filter="PAXG">Oro</button>
     </nav>
     <div id="historyList" class="trades"></div>
   </div>
@@ -127,6 +128,11 @@
       <div id="chartEth" class="mini-chart"></div>
       <div id="compareEthInfo" class="compare-info"></div>
     </div>
+    <div class="compare-card">
+      <h2>Oro <small class="muted-small">(PAXG, 1 token = 1 oncia)</small></h2>
+      <div id="chartGold" class="mini-chart"></div>
+      <div id="compareGoldInfo" class="compare-info"></div>
+    </div>
   </div>
 
   <!-- ---------- COME FUNZIONA ---------- -->
@@ -135,7 +141,7 @@
     <div class="prose">
       <p>
         Il bot fa trading in <b>simulazione</b>: nessun euro vero, nessun exchange reale.
-        Ogni giorno guarda i prezzi di Bitcoin ed Ethereum e decide da solo se comprare,
+        Ogni giorno guarda i prezzi di Bitcoin, Ethereum e dell'<b>oro</b> e decide da solo se comprare,
         vendere o restare fermo, seguendo sempre la stessa strategia — senza emozioni,
         senza fretta.
       </p>
@@ -149,6 +155,14 @@
         indovinare i minimi e i massimi.
       </p>
 
+      <h3>Perché anche l'oro</h3>
+      <p>
+        Dal 27 settembre il bot segue anche l'oro, tramite <b>PAXG</b>: un token garantito da oro
+        fisico (1 PAXG = 1 oncia) che si scambia a tutte le ore come le crypto. L'oro di solito non
+        crolla insieme a Bitcoin ed Ethereum: nei test sugli ultimi 2 anni, aggiungerlo ha quasi
+        dimezzato i cali del portafoglio. Usa la stessa strategia a medie mobili delle altre due.
+      </p>
+
       <h3>Quando controlla</h3>
       <ul>
         <li><b>Alle 8 di ogni mattina</b> fa l'analisi completa: decide se comprare o vendere e manda il resoconto su Telegram e per email.</li>
@@ -157,7 +171,7 @@
 
       <h3>Quanto rischia per volta</h3>
       <ul>
-        <li>Ogni nuovo acquisto usa il <b>35%</b> del capitale — con BTC ed ETH entrambi aperti il bot tiene circa il 70% investito e il 30% liquido. (Fino al 25 settembre era il 25%: le posizioni aperte prima restano di quella misura finché il bot non le rivende e ricompra.)</li>
+        <li>Ogni nuovo acquisto usa il <b>25%</b> del capitale — con BTC, ETH e oro tutti aperti il bot tiene al massimo il 75% investito e il 25% liquido.</li>
         <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dalle medie mobili.</li>
         <li><b>Dopo uno stop-loss aspetta</b>: non ricompra finché le medie non si sono incrociate di nuovo (prima al ribasso, poi al rialzo). Così non rientra nello stesso calo che l'ha appena fatto uscire.</li>
         <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
@@ -232,22 +246,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=5"></script>
-<script src="js/gate.js?v=5"></script>
-<script src="js/github.js?v=5"></script>
-<script src="js/prices.js?v=5"></script>
-<script src="js/demo.js?v=5"></script>
-<script src="js/signal.js?v=5"></script>
-<script src="js/equity.js?v=5"></script>
-<script src="js/currency.js?v=5"></script>
-<script src="js/chart.js?v=5"></script>
-<script src="js/router.js?v=5"></script>
-<script src="js/stats.js?v=5"></script>
-<script src="js/history.js?v=5"></script>
-<script src="js/view-stats.js?v=5"></script>
-<script src="js/compare.js?v=5"></script>
-<script src="js/alerts.js?v=5"></script>
-<script src="js/install.js?v=5"></script>
-<script src="js/app.js?v=5"></script>
+<script src="js/config.js?v=6"></script>
+<script src="js/gate.js?v=6"></script>
+<script src="js/github.js?v=6"></script>
+<script src="js/prices.js?v=6"></script>
+<script src="js/demo.js?v=6"></script>
+<script src="js/signal.js?v=6"></script>
+<script src="js/equity.js?v=6"></script>
+<script src="js/currency.js?v=6"></script>
+<script src="js/chart.js?v=6"></script>
+<script src="js/router.js?v=6"></script>
+<script src="js/stats.js?v=6"></script>
+<script src="js/history.js?v=6"></script>
+<script src="js/view-stats.js?v=6"></script>
+<script src="js/compare.js?v=6"></script>
+<script src="js/alerts.js?v=6"></script>
+<script src="js/install.js?v=6"></script>
+<script src="js/app.js?v=6"></script>
 </body>
 </html>

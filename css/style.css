@@ -659,3 +659,7 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 .banner-demo { background: rgba(240, 180, 41, .14); border-bottom: 1px solid rgba(240, 180, 41, .35); color: #f5cf6b; }
 .banner-demo .dot { background: #f0b429; }
 .banner-demo .banner-action { background: rgba(240, 180, 41, .2); }
+
+/* ---------------- oro (PAXG) ---------------- */
+.pos-icon.gold { background: linear-gradient(140deg, #f5d77a, #c99a2e); }
+.muted-small { color: var(--muted); font-weight: 400; font-size: .78rem; }

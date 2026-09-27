@@ -8,6 +8,7 @@ const Compare = (() => {
   const boxes = {
     "BTC/USDT": { chartEl: "chartBtc", infoEl: "compareBtcInfo", name: "Bitcoin" },
     "ETH/USDT": { chartEl: "chartEth", infoEl: "compareEthInfo", name: "Ethereum" },
+    "PAXG/USD": { chartEl: "chartGold", infoEl: "compareGoldInfo", name: "Oro" },
   };
   const eur = Currency.eur;
 

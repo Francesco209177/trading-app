@@ -28,7 +28,7 @@ const StatsView = (() => {
         const pct = (Math.abs(v) / maxAbs) * 46; // lascia margine sopra/sotto la linea dello zero
         const cls = v >= 0 ? "up" : "down";
         const label = new Date(c.exitTime).toLocaleDateString("it-IT", { day: "2-digit", month: "short" });
-        return `<div class="pl-col" title="${esc(Sym.base(c.symbol))} · ${esc(Fmt.signed(v))}&nbsp;${CONFIG.display}">
+        return `<div class="pl-col" title="${esc(Sym.short(c.symbol))} · ${esc(Fmt.signed(v))}&nbsp;${CONFIG.display}">
           <div class="pl-bar ${cls}" style="height:${pct}%"></div>
           <div class="pl-label">${esc(label)}</div>
         </div>`;
@@ -97,7 +97,7 @@ const StatsView = (() => {
         <div class="trade">
           <div class="trade-side ${c.pl >= 0 ? "buy" : "sell"}">${c.pl >= 0 ? "↑" : "↓"}</div>
           <div class="trade-main">
-            <div class="trade-title">${Sym.base(c.symbol)} · ${Fmt.dateTime(new Date(c.entryTime))} → ${Fmt.dateTime(new Date(c.exitTime))}</div>
+            <div class="trade-title">${Sym.short(c.symbol)} · ${Fmt.dateTime(new Date(c.entryTime))} → ${Fmt.dateTime(new Date(c.exitTime))}</div>
             <div class="trade-sub">${Fmt.price(eur(c.entryPrice))} → ${Fmt.price(eur(c.exitPrice))}&nbsp;${CONFIG.display} (${Fmt.pct(c.plPct)})</div>
           </div>
           <div class="trade-val ${c.pl >= 0 ? "up" : "down"}">${Fmt.signedCur(eur(c.pl))}</div>
