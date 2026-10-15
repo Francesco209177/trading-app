@@ -22,7 +22,7 @@ const CONFIG = {
 
   // Regole del bot, per mostrare stop-loss e segnale delle medie.
   // Devono combaciare con strategy/risk in config.yaml del bot.
-  strategy: { fast: 20, slow: 50, stopLossPct: 0.08 },
+  strategy: { fast: 10, slow: 30, stopLossPct: 0.08 },
 
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,

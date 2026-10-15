@@ -24,7 +24,7 @@ Una barra in basso porta a 5 sezioni, tutte dentro la stessa pagina (nessuna ric
 | **Home** | Il dashboard di sempre: valore live, grafico, posizioni, ultime operazioni, più un piccolo riepilogo in cima con il **segnale di oggi** ("resta investito", "venderà alle 8"…). Sotto ogni posizione: a che prezzo scatterebbe lo **stop-loss** e quanto manca. |
 | **Storico** | Tutte le operazioni del bot, filtrabili per moneta. |
 | **Statistiche** | Operazioni chiuse e il loro guadagno realizzato, giorno migliore e peggiore, confronto con "se avesse solo comprato e tenuto senza mai più toccare nulla". |
-| **Confronto** | BTC ed ETH separati, ognuno col proprio grafico di prezzo, la propria posizione e le due **medie mobili** (20 e 50 giorni) con la distanza tra loro. |
+| **Confronto** | BTC ed ETH separati, ognuno col proprio grafico di prezzo, la propria posizione e le due **medie mobili** (10 e 30 giorni) con la distanza tra loro. |
 | **Come funziona** | Spiega in parole semplici la strategia del bot (nessun dato live, si apre anche offline). |
 
 ---
@@ -120,7 +120,7 @@ js/gate.js                 la porta: chiave, salvataggio, "dimentica chiave"
 js/github.js               lettura di portfolio.json dal repo privato (con ETag)
 js/prices.js               tick dal vivo (Binance, ricaduta su Kraken) e candele storiche
 js/demo.js                 la demo per chi non ha la chiave: portafoglio inventato, prezzi veri
-js/signal.js               "cosa farà il bot": medie 20/50 giorni e prezzo dello stop-loss
+js/signal.js               "cosa farà il bot": medie 10/30 giorni e prezzo dello stop-loss
 js/equity.js               i conti dell'equity: valore, P&L, ricostruzione della curva
 js/currency.js             conversione USDT → euro, condivisa da tutte le pagine
 js/chart.js                fabbrica di grafici (ogni pagina che ne apre uno ha il proprio)
