@@ -9,6 +9,7 @@ const App = (() => {
     heroLabel: document.getElementById("heroLabel"),
     deltaDay: document.getElementById("deltaDay"),
     deltaTotal: document.getElementById("deltaTotal"),
+    startLine: document.getElementById("startLine"),
     chart: document.getElementById("chart"),
     ranges: document.getElementById("ranges"),
     positions: document.getElementById("positions"),
@@ -187,6 +188,7 @@ const App = (() => {
     el.equity.innerHTML = `${Fmt.money(value)} <span style="font-size:.45em;color:var(--muted);font-weight:600">${CONFIG.display}</span>`;
 
     if (scrub) {
+      el.startLine.hidden = true;
       el.heroLabel.textContent = Fmt.dateTime(new Date(scrub.time * 1000));
       const diff = rangeFirstValue != null ? scrub.value - rangeFirstValue : 0;
       setDelta(el.deltaDay, diff, rangeFirstValue ? (diff / rangeFirstValue) * 100 : 0, "nel periodo");
@@ -196,6 +198,12 @@ const App = (() => {
 
     el.heroLabel.textContent = "Valore del portafoglio";
     el.deltaTotal.hidden = false;
+
+    // Il bot parte da 1.000 USDT: lo mostriamo anche in euro, allo stesso cambio di oggi,
+    // così il numero grande si confronta con il punto di partenza giusto.
+    el.startLine.hidden = false;
+    el.startLine.textContent =
+      `Partito con ${Fmt.money(state.start_equity, 0)} ${CONFIG.quote} ≈ ${Fmt.cur(eur(state.start_equity), 0)} al cambio di oggi`;
 
     const snap = Equity.lastSnapshot(state);
     if (snap) {
@@ -219,7 +227,8 @@ const App = (() => {
 
   function setDelta(node, diff, pct, suffix) {
     node.textContent = `${Fmt.signed(diff)} ${CONFIG.display} (${Fmt.pct(pct)}) ${suffix}`;
-    node.className = "delta " + (diff >= 0 ? "up" : "down");
+    // Zero (arrotondato) = grigio, non rosso né verde.
+    node.className = "delta " + (Math.round(Math.abs(diff) * 100) === 0 ? "muted" : diff >= 0 ? "up" : "down");
   }
 
   // Lampeggio verde/rosso a ogni movimento del prezzo.

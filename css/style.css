@@ -663,3 +663,7 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 /* ---------------- oro (PAXG) ---------------- */
 .pos-icon.gold { background: linear-gradient(140deg, #f5d77a, #c99a2e); }
 .muted-small { color: var(--muted); font-weight: 400; font-size: .78rem; }
+
+/* punto di partenza in euro, sotto il numero grande */
+.start-line { margin-top: 6px; color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.start-line[hidden] { display: none; }

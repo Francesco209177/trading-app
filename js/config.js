@@ -61,9 +61,13 @@ const Fmt = {
     // useGrouping "always": in italiano 1038 resterebbe senza punto, noi vogliamo 1.038.
     new Intl.NumberFormat("it-IT", { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: "always" }).format(n),
 
-  signed: (n, dec = 2) => (n >= 0 ? "+" : "−") + Fmt.money(Math.abs(n), dec),
+  // Se arrotondato fa zero, niente segno: "0,00" e non "−0,00".
+  signed: (n, dec = 2) => {
+    const zero = Math.round(Math.abs(n) * 10 ** dec) === 0;
+    return (zero ? "" : n >= 0 ? "+" : "−") + Fmt.money(Math.abs(n), dec);
+  },
 
-  pct: (n) => (n >= 0 ? "+" : "−") + Fmt.money(Math.abs(n), 2) + "%",
+  pct: (n) => Fmt.signed(n, 2) + "%",
 
   // I prezzi grossi (BTC) non hanno bisogno dei centesimi, quelli piccoli sì.
   price: (n) => Fmt.money(n, n >= 1000 ? 0 : n >= 1 ? 2 : 6),
