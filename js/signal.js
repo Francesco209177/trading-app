@@ -3,7 +3,7 @@
    qui per mostrarlo a schermo.
 
    - Segnale: media dei prezzi di chiusura degli ultimi 10 giorni
-     contro quella degli ultimi 50. Veloce sopra lenta = trend
+     contro quella degli ultimi 30. Veloce sopra lenta = trend
      rialzista (il bot sta dentro), sotto = ribassista (esce).
    - Stop-loss: prezzo di carico meno l'8%. Il bot lo controlla
      ogni ora e, se scatta, vende subito.
