@@ -66,7 +66,7 @@ const App = (() => {
       onStatus: renderStatus,
     });
 
-    // Segnale delle medie: cambia al massimo una volta al giorno, basta rileggerlo ogni mezz'ora.
+    // Segnale del breakout: cambia al massimo una volta al giorno, basta rileggerlo ogni mezz'ora.
     Signal.refresh(symbols()).then(schedulePaint);
 
     await loadSeries();
@@ -315,7 +315,7 @@ const App = (() => {
         ? `In linea con "comprare e tenere" (${Fmt.signedCur(eur(vsBh))})`
         : `${vsBh >= 0 ? "Meglio" : "Peggio"} di ${Fmt.cur(eur(Math.abs(vsBh)))} rispetto a "comprare e tenere"`;
 
-    // Cosa dicono oggi le medie, moneta per moneta.
+    // Cosa dice oggi il canale dei prezzi, moneta per moneta.
     const intents = symbols()
       .map((pair) => {
         const it = Signal.intent(pair, !!(state.positions || {})[pair], !!(state.stopped || {})[pair]);

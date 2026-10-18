@@ -20,9 +20,9 @@ const CONFIG = {
   // Valuta mostrata a schermo: convertiamo tutto in euro col cambio del momento.
   display: "€",
 
-  // Regole del bot, per mostrare stop-loss e segnale delle medie.
+  // Regole del bot (breakout Donchian 55/20), per mostrare stop-loss e segnale.
   // Devono combaciare con strategy/risk in config.yaml del bot.
-  strategy: { fast: 10, slow: 30, stopLossPct: 0.08 },
+  strategy: { entry: 55, exit: 20, stopLossPct: 0.08 },
 
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,

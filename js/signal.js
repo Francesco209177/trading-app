@@ -2,9 +2,11 @@
    "Cosa farà il bot?" — lo stesso ragionamento del bot, rifatto
    qui per mostrarlo a schermo.
 
-   - Segnale: media dei prezzi di chiusura degli ultimi 10 giorni
-     contro quella degli ultimi 30. Veloce sopra lenta = trend
-     rialzista (il bot sta dentro), sotto = ribassista (esce).
+   - Segnale (breakout Donchian, dal 18/10/2026): il bot confronta l'ultima
+     chiusura giornaliera con il canale dei prezzi precedenti.
+       sopra il massimo degli ultimi 55 giorni  -> compra
+       sotto il minimo degli ultimi 20 giorni   -> vende
+       in mezzo                                 -> non cambia nulla
    - Stop-loss: prezzo di carico meno l'8%. Il bot lo controlla
      ogni ora e, se scatta, vende subito.
 
@@ -15,26 +17,28 @@
 
 const Signal = (() => {
   const DAY = 24 * 3600 * 1000;
-  const cache = {}; // pair -> { fast, slow }
+  const cache = {}; // pair -> { price, high, low }
   let loadedAt = 0;
   let loading = null;
 
-  function sma(values, period) {
-    if (values.length < period) return null;
-    let sum = 0;
-    for (let i = values.length - period; i < values.length; i++) sum += values[i];
-    return sum / period;
-  }
-
-  // Scarica le candele giornaliere e ricalcola le due medie.
+  // Scarica le candele giornaliere e ricalcola il canale.
   function refresh(pairs) {
     if (loading) return loading;
-    const from = Date.now() - (CONFIG.strategy.slow + 15) * DAY;
+    const { entry, exit } = CONFIG.strategy;
+    const from = Date.now() - (entry + 15) * DAY;
     loading = Promise.all(
       pairs.map(async (pair) => {
         const rows = await Prices.klines(pair, "1d", from);
-        const closes = rows.map((r) => r.c);
-        cache[pair] = { fast: sma(closes, CONFIG.strategy.fast), slow: sma(closes, CONFIG.strategy.slow) };
+        // L'ultima candela è quella di oggi, ancora aperta: il bot guarda solo le chiuse.
+        const closes = rows.slice(0, -1).map((r) => r.c);
+        if (closes.length < entry + 1) return;
+        const price = closes[closes.length - 1];
+        const before = closes.slice(0, -1); // le candele PRECEDENTI all'ultima
+        cache[pair] = {
+          price,
+          high: Math.max(...before.slice(-entry)),
+          low: Math.min(...before.slice(-exit)),
+        };
       })
     ).then(() => {
       loadedAt = Date.now();
@@ -46,18 +50,20 @@ const Signal = (() => {
   // null finché le candele non sono arrivate.
   function of(pair) {
     const c = cache[pair];
-    if (!c || c.fast == null || c.slow == null) return null;
-    return { fast: c.fast, slow: c.slow, up: c.fast > c.slow, gapPct: (c.fast / c.slow - 1) * 100 };
+    if (!c) return null;
+    const signal = c.price > c.high ? "long" : c.price < c.low ? "flat" : "keep";
+    return { price: c.price, high: c.high, low: c.low, signal };
   }
 
-  // Cosa farà alla prossima analisi delle 8, detto a parole.
-  // stopped = il bot è uscito con lo stop-loss e aspetta un nuovo incrocio.
+  // Cosa farà, detto a parole.
+  // stopped = il bot è uscito con lo stop-loss: prima deve uscire dal canale (sotto il minimo)
+  // e poi rompere di nuovo il massimo.
   function intent(pair, held, stopped) {
     const s = of(pair);
     if (!s) return null;
-    if (held) return s.up ? { text: "resta investito", cls: "up" } : { text: "venderà alle 8", cls: "down" };
-    if (stopped && s.up) return { text: "aspetta un nuovo incrocio", cls: "" };
-    return s.up ? { text: "comprerà alle 8", cls: "up" } : { text: "resta fuori", cls: "" };
+    if (held) return s.signal === "flat" ? { text: "venderà a breve", cls: "down" } : { text: "resta investito", cls: "up" };
+    if (stopped && s.signal === "long") return { text: "aspetta un nuovo segnale", cls: "" };
+    return s.signal === "long" ? { text: "comprerà alle 8", cls: "up" } : { text: "resta fuori", cls: "" };
   }
 
   function stopPrice(pos) {

@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
 
@@ -147,13 +147,18 @@
         senza fretta.
       </p>
 
-      <h3>La strategia: incrocio di medie mobili</h3>
+      <h3>La strategia: breakout (Donchian 55/20)</h3>
       <p>
-        Ogni giorno calcola due medie del prezzo: una "veloce" sugli ultimi 10 giorni e una
-        "lenta" sugli ultimi 30. Quando la veloce sale sopra la lenta, il trend è considerato
-        rialzista e il bot compra. Quando la veloce scende sotto la lenta, il trend si considera
-        girato e il bot vende. È una strategia "tranquilla": segue il trend, non cerca di
-        indovinare i minimi e i massimi.
+        Ogni giorno guarda il "canale" dei prezzi di ogni moneta: il massimo degli ultimi 55 giorni
+        e il minimo degli ultimi 20. Quando il prezzo sale <b>sopra il massimo dei 55 giorni</b>, il
+        trend è considerato nato e il bot compra. Quando scende <b>sotto il minimo dei 20 giorni</b>,
+        il trend si considera finito e il bot vende. In mezzo al canale non fa niente. Segue il trend,
+        non cerca di indovinare i minimi e i massimi.
+      </p>
+      <p>
+        È una <b>prova</b>: dal 18 ottobre ha preso il posto delle medie mobili 10/30, che ora gira nel
+        "laboratorio" per un confronto. Nei test sul passato rendeva meglio rispetto al rischio, ma
+        negli anni più recenti le medie hanno fatto meglio: per questo si guarda come va dal vivo.
       </p>
 
       <h3>Perché anche l'oro</h3>
@@ -161,7 +166,7 @@
         Dal 27 settembre il bot segue anche l'oro, tramite <b>PAXG</b>: un token garantito da oro
         fisico (1 PAXG = 1 oncia) che si scambia a tutte le ore come le crypto. L'oro di solito non
         crolla insieme a Bitcoin ed Ethereum: nei test sugli ultimi 2 anni, aggiungerlo ha quasi
-        dimezzato i cali del portafoglio. Usa la stessa strategia a medie mobili delle altre due.
+        dimezzato i cali del portafoglio. Usa la stessa strategia delle altre due.
       </p>
 
       <h3>Quando controlla</h3>
@@ -173,23 +178,23 @@
       <h3>Quanto rischia per volta</h3>
       <ul>
         <li>Ogni nuovo acquisto usa il <b>25%</b> del capitale — con BTC, ETH e oro tutti aperti il bot tiene al massimo il 75% investito e il 25% liquido.</li>
-        <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dalle medie mobili.</li>
-        <li><b>Dopo uno stop-loss aspetta</b>: non ricompra finché le medie non si sono incrociate di nuovo (prima al ribasso, poi al rialzo). Così non rientra nello stesso calo che l'ha appena fatto uscire.</li>
+        <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dal canale dei prezzi.</li>
+        <li><b>Dopo uno stop-loss aspetta</b>: non ricompra finché il prezzo non è sceso sotto il minimo dei 20 giorni e poi non ha rotto di nuovo il massimo dei 55. Così non rientra nello stesso calo che l'ha appena fatto uscire.</li>
         <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
         <li>Ogni operazione paga una commissione simulata dello <b>0,4%</b>, quella vera di Kraken per un conto piccolo (fino al 25 settembre era lo 0,1%, troppo ottimista).</li>
       </ul>
 
       <h3>Perché ci mette così tanto a decidere</h3>
       <p>
-        Le medie mobili sono calcolate su base giornaliera: servono giorni, non minuti, per
+        Il canale dei prezzi è calcolato su base giornaliera: servono giorni, non minuti, per
         cambiare direzione. Per questo il bot può restare fermo sulle stesse posizioni per
         settimane — non è pigrizia, è la strategia che funziona così.
       </p>
 
       <h3>Cosa mostra questa app</h3>
       <p>
-        In Home, sotto ogni moneta, vedi a che prezzo scatterebbe lo stop-loss e cosa dicono
-        oggi le medie mobili ("resta investito", "venderà alle 8"…). È una stima rifatta qui
+        In Home, sotto ogni moneta, vedi a che prezzo scatterebbe lo stop-loss e cosa dice
+        oggi il canale dei prezzi ("resta investito", "comprerà alle 8"…). È una stima rifatta qui
         con gli stessi calcoli del bot: la decisione vera la prende lui alle 8.
       </p>
       <p>
@@ -247,22 +252,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=8"></script>
-<script src="js/gate.js?v=8"></script>
-<script src="js/github.js?v=8"></script>
-<script src="js/prices.js?v=8"></script>
-<script src="js/demo.js?v=8"></script>
-<script src="js/signal.js?v=8"></script>
-<script src="js/equity.js?v=8"></script>
-<script src="js/currency.js?v=8"></script>
-<script src="js/chart.js?v=8"></script>
-<script src="js/router.js?v=8"></script>
-<script src="js/stats.js?v=8"></script>
-<script src="js/history.js?v=8"></script>
-<script src="js/view-stats.js?v=8"></script>
-<script src="js/compare.js?v=8"></script>
-<script src="js/alerts.js?v=8"></script>
-<script src="js/install.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/config.js?v=9"></script>
+<script src="js/gate.js?v=9"></script>
+<script src="js/github.js?v=9"></script>
+<script src="js/prices.js?v=9"></script>
+<script src="js/demo.js?v=9"></script>
+<script src="js/signal.js?v=9"></script>
+<script src="js/equity.js?v=9"></script>
+<script src="js/currency.js?v=9"></script>
+<script src="js/chart.js?v=9"></script>
+<script src="js/router.js?v=9"></script>
+<script src="js/stats.js?v=9"></script>
+<script src="js/history.js?v=9"></script>
+<script src="js/view-stats.js?v=9"></script>
+<script src="js/compare.js?v=9"></script>
+<script src="js/alerts.js?v=9"></script>
+<script src="js/install.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>

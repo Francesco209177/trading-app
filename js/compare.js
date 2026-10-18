@@ -47,13 +47,24 @@ const Compare = (() => {
 
       const pos = state.positions && state.positions[symbol];
       const s = Signal.of(symbol);
-      // Le due medie del bot: la distanza dice quanto manca a un incrocio.
-      const medie = s
-        ? `<div class="compare-row">
-             <span>Media ${CONFIG.strategy.fast}g ${Fmt.price(eur(s.fast))} · ${CONFIG.strategy.slow}g ${Fmt.price(eur(s.slow))}&nbsp;${CONFIG.display}</span>
-             <span class="${s.up ? "up" : "down"}">${s.up ? "▲ rialzista" : "▼ ribassista"} (${Fmt.pct(s.gapPct)})</span>
-           </div>`
-        : "";
+      const live = prices[symbol] != null ? prices[symbol] : pos ? pos.entry_price : null;
+      // Il canale del bot: quanto manca al prezzo per comprare (massimo) o per uscire (minimo).
+      let medie = "";
+      if (s && live != null) {
+        const toLow = (live / s.low - 1) * 100;
+        const toHigh = (s.high / live - 1) * 100;
+        const stato = pos
+          ? toLow > 0
+            ? `<span>esce se scende del ${Fmt.money(toLow, 1)}%</span>`
+            : `<span class="down">sotto il minimo: esce</span>`
+          : toHigh > 0
+          ? `<span>compra se sale del ${Fmt.money(toHigh, 1)}%</span>`
+          : `<span class="up">sopra il massimo: compra</span>`;
+        medie = `<div class="compare-row">
+             <span>Canale: minimo ${CONFIG.strategy.exit}g ${Fmt.price(eur(s.low))} · massimo ${CONFIG.strategy.entry}g ${Fmt.price(eur(s.high))}&nbsp;${CONFIG.display}</span>
+             ${stato}
+           </div>`;
+      }
 
       if (!pos) {
         info.innerHTML = `<div class="compare-row"><span>Nessuna posizione aperta</span></div>` + medie;
