@@ -48,20 +48,40 @@ const Compare = (() => {
       const pos = state.positions && state.positions[symbol];
       const s = Signal.of(symbol);
       const live = prices[symbol] != null ? prices[symbol] : pos ? pos.entry_price : null;
-      // Il canale del bot: quanto manca al prezzo per comprare (massimo) o per uscire (minimo).
+      // Il canale del bot: quanto manca al prezzo per comprare (massimo), per uscire
+      // (minimo) o, sulle monete con lo scoperto, per vendere allo scoperto o chiuderlo.
       let medie = "";
       if (s && live != null) {
+        const { entry, exit } = CONFIG.strategy;
         const toLow = (live / s.low - 1) * 100;
         const toHigh = (s.high / live - 1) * 100;
-        const stato = pos
-          ? toLow > 0
+        const toLowN = (live / s.lowN - 1) * 100;
+        const toHighM = (s.highM / live - 1) * 100;
+        let stato;
+        let canale = `minimo ${exit}g ${Fmt.price(eur(s.low))} · massimo ${entry}g ${Fmt.price(eur(s.high))}`;
+        if (pos && pos.qty < 0) {
+          canale = `massimo ${exit}g ${Fmt.price(eur(s.highM))} · minimo ${entry}g ${Fmt.price(eur(s.lowN))}`;
+          stato = toHighM > 0
+            ? `<span>chiude lo scoperto se sale del ${Fmt.money(toHighM, 1)}%</span>`
+            : `<span class="down">sopra il massimo: chiude lo scoperto</span>`;
+        } else if (pos) {
+          stato = toLow > 0
             ? `<span>esce se scende del ${Fmt.money(toLow, 1)}%</span>`
-            : `<span class="down">sotto il minimo: esce</span>`
-          : toHigh > 0
-          ? `<span>compra se sale del ${Fmt.money(toHigh, 1)}%</span>`
-          : `<span class="up">sopra il massimo: compra</span>`;
+            : `<span class="down">sotto il minimo: esce</span>`;
+        } else if (s.canShort) {
+          canale = `minimo ${entry}g ${Fmt.price(eur(s.lowN))} · massimo ${entry}g ${Fmt.price(eur(s.high))}`;
+          stato = toHigh <= 0
+            ? `<span class="up">sopra il massimo: compra</span>`
+            : toLowN <= 0
+            ? `<span class="up">sotto il minimo: scoperto</span>`
+            : `<span>compra se sale del ${Fmt.money(toHigh, 1)}% · scoperto se scende del ${Fmt.money(toLowN, 1)}%</span>`;
+        } else {
+          stato = toHigh > 0
+            ? `<span>compra se sale del ${Fmt.money(toHigh, 1)}%</span>`
+            : `<span class="up">sopra il massimo: compra</span>`;
+        }
         medie = `<div class="compare-row">
-             <span>Canale: minimo ${CONFIG.strategy.exit}g ${Fmt.price(eur(s.low))} · massimo ${CONFIG.strategy.entry}g ${Fmt.price(eur(s.high))}&nbsp;${CONFIG.display}</span>
+             <span>Canale: ${canale}&nbsp;${CONFIG.display}</span>
              ${stato}
            </div>`;
       }
@@ -71,11 +91,13 @@ const Compare = (() => {
         return;
       }
       const price = prices[symbol] != null ? prices[symbol] : pos.entry_price;
-      const plPct = pos.entry_price ? (price / pos.entry_price - 1) * 100 : 0;
+      const short = pos.qty < 0;
+      // Scoperto: si guadagna se il prezzo scende.
+      const plPct = pos.entry_price ? (price / pos.entry_price - 1) * 100 * (short ? -1 : 1) : 0;
 
       info.innerHTML = `
         <div class="compare-row">
-          <span>Carico ${Fmt.price(eur(pos.entry_price))} → ${Fmt.price(eur(price))}&nbsp;${CONFIG.display}</span>
+          <span>${short ? "Scoperto: venduto a" : "Carico"} ${Fmt.price(eur(pos.entry_price))} → ${Fmt.price(eur(price))}&nbsp;${CONFIG.display}</span>
           <span class="${plPct >= 0 ? "up" : "down"}">${Fmt.pct(plPct)}</span>
         </div>
         ${medie}

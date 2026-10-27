@@ -97,7 +97,7 @@ const StatsView = (() => {
         <div class="trade">
           <div class="trade-side ${c.pl >= 0 ? "buy" : "sell"}">${c.pl >= 0 ? "↑" : "↓"}</div>
           <div class="trade-main">
-            <div class="trade-title">${Sym.short(c.symbol)} · ${Fmt.dateTime(new Date(c.entryTime))} → ${Fmt.dateTime(new Date(c.exitTime))}</div>
+            <div class="trade-title">${Sym.short(c.symbol)}${c.short ? " (scoperto)" : ""} · ${Fmt.dateTime(new Date(c.entryTime))} → ${Fmt.dateTime(new Date(c.exitTime))}</div>
             <div class="trade-sub">${Fmt.price(eur(c.entryPrice))} → ${Fmt.price(eur(c.exitPrice))}&nbsp;${CONFIG.display} (${Fmt.pct(c.plPct)})</div>
           </div>
           <div class="trade-val ${c.pl >= 0 ? "up" : "down"}">${Fmt.signedCur(eur(c.pl))}</div>

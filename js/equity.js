@@ -28,19 +28,33 @@ const Equity = (() => {
   function positions(state, prices) {
     return Object.entries(state.positions || {}).map(([sym, pos]) => {
       const price = prices[sym] != null ? prices[sym] : pos.entry_price;
-      const value = pos.qty * price;
-      const cost = pos.qty * pos.entry_price;
+      // Scoperto = quantità negativa: se il prezzo scende il guadagno è positivo.
+      const short = pos.qty < 0;
+      const pl = (price - pos.entry_price) * pos.qty - (pos.rollover || 0);
+      const cost = Math.abs(pos.qty) * pos.entry_price;
       return {
         symbol: sym,
-        qty: pos.qty,
+        qty: Math.abs(pos.qty),
+        short,
         entry: pos.entry_price,
         price,
-        value,
-        pl: value - cost,
-        plPct: cost ? ((value - cost) / cost) * 100 : 0,
+        value: Math.abs(pos.qty) * price,
+        pl,
+        plPct: cost ? (pl / cost) * 100 : 0,
         live: prices[sym] != null,
       };
     });
+  }
+
+  // Soldi non impegnati in nessuna posizione. Con lo scoperto la liquidità del
+  // bot contiene anche l'incasso della vendita, che però serve a ricomprare.
+  function freeCash(state, prices) {
+    let used = 0;
+    Object.entries(state.positions || {}).forEach(([sym, pos]) => {
+      const price = prices[sym] != null ? prices[sym] : pos.entry_price;
+      used += Math.abs(pos.qty) * price;
+    });
+    return now(state, prices) - used;
   }
 
   // Ultimo valore registrato dal bot (lo scatto del resoconto delle 8:00).
@@ -73,8 +87,9 @@ const Equity = (() => {
       } else {
         cash += value - fee;
         pos[tr.symbol] = (pos[tr.symbol] || 0) - tr.qty;
-        if (pos[tr.symbol] < 1e-12) delete pos[tr.symbol];
       }
+      // Con lo scoperto la quantità può essere negativa: si toglie solo quando torna a zero.
+      if (Math.abs(pos[tr.symbol]) < 1e-12) delete pos[tr.symbol];
       steps.push({ t: new Date(tr.time).getTime(), cash, pos: Object.assign({}, pos) });
     });
 
@@ -121,7 +136,7 @@ const Equity = (() => {
       let value = snap.cash;
       let complete = true;
       Object.entries(snap.pos).forEach(([sym, qty]) => {
-        if (qty <= 0) return;
+        if (qty === 0) return;
         if (lastPrice[sym] == null) complete = false;
         else value += qty * lastPrice[sym];
       });
@@ -169,5 +184,5 @@ const Equity = (() => {
     return times.length ? Math.min.apply(null, times) - 3600 * 1000 : Date.now() - 24 * 3600 * 1000;
   }
 
-  return { now, positions, lastSnapshot, timeline, series, view, RANGES };
+  return { now, positions, freeCash, lastSnapshot, timeline, series, view, RANGES };
 })();

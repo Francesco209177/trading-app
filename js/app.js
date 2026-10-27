@@ -248,7 +248,7 @@ const App = (() => {
     const cash = `
       <div class="cash">
         <span>Liquidità non investita</span>
-        <b>${Fmt.money(eur(state.cash))}&nbsp;${CONFIG.display}</b>
+        <b>${Fmt.money(eur(Equity.freeCash(state, prices)))}&nbsp;${CONFIG.display}</b>
       </div>`;
 
     if (!rows.length) {
@@ -264,22 +264,23 @@ const App = (() => {
           const cls = base === "BTC" ? "btc" : base === "ETH" ? "eth" : base === "PAXG" ? "gold" : "other";
           const icon = base === "PAXG" ? "Au" : base;
           const stop = Signal.stopPrice(state.positions[p.symbol]);
-          const room = ((p.price - stop) / p.price) * 100;
-          const intent = Signal.intent(p.symbol, true);
+          // Per lo scoperto lo stop è SOPRA il prezzo: scatta se sale.
+          const room = p.short ? ((stop - p.price) / p.price) * 100 : ((p.price - stop) / p.price) * 100;
+          const intent = Signal.intent(p.symbol, state.positions[p.symbol]);
           return `
         <div class="pos">
           <div class="pos-icon ${cls}">${esc(icon)}</div>
           <div class="pos-main">
-            <div class="pos-name">${esc(nameOf(p.symbol))}</div>
-            <div class="pos-sub">${Fmt.qty(p.qty)} · carico ${Fmt.price(eur(p.entry))}&nbsp;${CONFIG.display}</div>
+            <div class="pos-name">${esc(nameOf(p.symbol))}${p.short ? ` <span class="chip">allo scoperto</span>` : ""}</div>
+            <div class="pos-sub">${Fmt.qty(p.qty)} · ${p.short ? "venduto a" : "carico"} ${Fmt.price(eur(p.entry))}&nbsp;${CONFIG.display}</div>
           </div>
           <div class="pos-right">
             <div class="pos-value">${Fmt.cur(eur(p.value))}</div>
             <div class="pos-pl ${p.pl >= 0 ? "up" : "down"}">${Fmt.signedCur(eur(p.pl))} (${Fmt.pct(p.plPct)})</div>
           </div>
           <div class="pos-guard">
-            <span title="Il bot controlla ogni ora: se il prezzo scende fin qui, vende subito.">
-              Stop-loss a <b>${Fmt.price(eur(stop))}&nbsp;${CONFIG.display}</b> · ${room > 0 ? `scatta se scende del ${Fmt.money(room, 1)}%` : "raggiunto"}
+            <span title="Il bot controlla ogni ora: se il prezzo ${p.short ? "sale" : "scende"} fin qui, chiude subito.">
+              Stop-loss a <b>${Fmt.price(eur(stop))}&nbsp;${CONFIG.display}</b> · ${room > 0 ? `scatta se ${p.short ? "sale" : "scende"} del ${Fmt.money(room, 1)}%` : "raggiunto"}
             </span>
             ${intent ? `<span class="chip ${intent.cls}">${intent.text}</span>` : ""}
           </div>
@@ -318,7 +319,7 @@ const App = (() => {
     // Cosa dice oggi il canale dei prezzi, moneta per moneta.
     const intents = symbols()
       .map((pair) => {
-        const it = Signal.intent(pair, !!(state.positions || {})[pair], !!(state.stopped || {})[pair]);
+        const it = Signal.intent(pair, (state.positions || {})[pair], (state.stopped || {})[pair]);
         return it ? `<b class="${it.cls}">${esc(Sym.short(pair))}</b> ${esc(it.text)}` : null;
       })
       .filter(Boolean);
@@ -349,9 +350,9 @@ const App = (() => {
           const buy = t.side === "BUY";
           return `
         <div class="trade">
-          <div class="trade-side ${buy ? "buy" : "sell"}" title="${buy ? "Acquisto" : "Vendita"}">${buy ? "A" : "V"}</div>
+          <div class="trade-side ${buy ? "buy" : "sell"}" title="${Side.title(t)}">${Side.letter(t)}</div>
           <div class="trade-main">
-            <div class="trade-title">${buy ? "Comprato" : "Venduto"} ${esc(Sym.short(t.symbol))}</div>
+            <div class="trade-title">${Side.label(t)} ${esc(Sym.short(t.symbol))}</div>
             <div class="trade-sub">${Fmt.dateTime(new Date(t.time))} · ${Fmt.qty(t.qty)} a ${Fmt.price(eur(t.price))}&nbsp;${CONFIG.display}</div>
           </div>
           <div class="trade-val">${Fmt.cur(eur(t.value))}</div>

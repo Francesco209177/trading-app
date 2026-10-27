@@ -22,7 +22,8 @@ const CONFIG = {
 
   // Regole del bot (breakout Donchian 55/20), per mostrare stop-loss e segnale.
   // Devono combaciare con strategy/risk in config.yaml del bot.
-  strategy: { entry: 55, exit: 20, stopLossPct: 0.08 },
+  // shortable = le coppie che il bot vende allo scoperto (dal 27/10/2026).
+  strategy: { entry: 55, exit: 20, stopLossPct: 0.08, shortable: ["BTC/USDT", "ETH/USDT"] },
 
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,
@@ -50,6 +51,19 @@ const Sym = {
   krakenRest: (pair) => pair.replace("/", "").replace("BTC", "XBT").toUpperCase(),
   // Nome breve da mostrare: "BTC", "ETH", e "Oro" invece di PAXG.
   short: (pair) => ({ PAXG: "Oro" }[pair.split("/")[0]] || pair.split("/")[0]),
+};
+
+/* ------------------------------------------------------------
+   Come si chiama un'operazione. Lo scoperto nel registro del bot
+   resta una SELL (apertura) e una BUY (chiusura), con "kind".
+   ------------------------------------------------------------ */
+
+const Side = {
+  label: (t) =>
+    t.kind === "short" ? "Venduto allo scoperto" : t.kind === "cover" ? "Chiuso lo scoperto" : t.side === "BUY" ? "Comprato" : "Venduto",
+  letter: (t) => (t.kind === "short" ? "S" : t.kind === "cover" ? "C" : t.side === "BUY" ? "A" : "V"),
+  title: (t) =>
+    t.kind === "short" ? "Vendita allo scoperto" : t.kind === "cover" ? "Chiusura dello scoperto" : t.side === "BUY" ? "Acquisto" : "Vendita",
 };
 
 /* ------------------------------------------------------------

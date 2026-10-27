@@ -15,6 +15,8 @@
 const Stats = (() => {
   // Accoppia acquisti e vendite per ogni moneta in ordine cronologico
   // (FIFO: la prima vendita chiude la quantità comprata per prima).
+  // Vale anche per lo scoperto: una vendita senza acquisti aperti apre uno
+  // scoperto, e l'acquisto successivo lo chiude.
   // Generico: funziona con 2 operazioni chiuse come con 200.
   function closedTrades(state) {
     const bySymbol = {};
@@ -26,37 +28,42 @@ const Stats = (() => {
     const closed = [];
 
     Object.entries(bySymbol).forEach(([symbol, trades]) => {
-      const open = []; // lotti ancora aperti: { qty, price, fee, time }
+      const open = []; // lotti ancora aperti: { side, qty, price, fee, time }
 
       trades.forEach((t) => {
-        if (t.side === "BUY") {
-          open.push({ qty: t.qty, price: t.price, fee: t.fee || 0, time: t.time });
-          return;
-        }
         let remaining = t.qty;
-        const sellFeePerUnit = t.qty ? (t.fee || 0) / t.qty : 0;
+        const feePerUnit = t.qty ? (t.fee || 0) / t.qty : 0;
 
-        while (remaining > 1e-12 && open.length) {
+        // Chiude i lotti aperti nella direzione opposta (vendita chiude un acquisto,
+        // acquisto chiude uno scoperto).
+        while (remaining > 1e-12 && open.length && open[0].side !== t.side) {
           const lot = open[0];
           const matched = Math.min(lot.qty, remaining);
-          const buyFeeShare = lot.qty ? (lot.fee * matched) / lot.qty : 0;
-          const sellFeeShare = sellFeePerUnit * matched;
-          const pl = matched * (t.price - lot.price) - buyFeeShare - sellFeeShare;
+          const openFeeShare = lot.qty ? (lot.fee * matched) / lot.qty : 0;
+          const closeFeeShare = feePerUnit * matched;
+          const short = lot.side === "SELL";
+          const move = short ? lot.price - t.price : t.price - lot.price;
+          const pl = matched * move - openFeeShare - closeFeeShare;
 
           closed.push({
             symbol,
+            short,
             qty: matched,
             entryTime: lot.time,
             exitTime: t.time,
             entryPrice: lot.price,
             exitPrice: t.price,
             pl,
-            plPct: lot.price ? (t.price / lot.price - 1) * 100 : 0,
+            plPct: lot.price ? (move / lot.price) * 100 : 0,
           });
 
+          lot.fee -= openFeeShare;
           lot.qty -= matched;
           remaining -= matched;
           if (lot.qty <= 1e-12) open.shift();
+        }
+        if (remaining > 1e-12) {
+          open.push({ side: t.side, qty: remaining, price: t.price, fee: feePerUnit * remaining, time: t.time });
         }
       });
     });
@@ -90,7 +97,7 @@ const Stats = (() => {
       .slice()
       .sort((a, b) => new Date(a.time) - new Date(b.time))
       .forEach((t) => {
-        if (t.side === "BUY" && !firstBuy[t.symbol]) firstBuy[t.symbol] = t;
+        if (t.side === "BUY" && !t.kind && !firstBuy[t.symbol]) firstBuy[t.symbol] = t;
       });
 
     let spent = 0;

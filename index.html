@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=9">
+<link rel="stylesheet" href="css/style.css?v=10">
 </head>
 <body>
 
@@ -155,6 +155,20 @@
         il trend si considera finito e il bot vende. In mezzo al canale non fa niente. Segue il trend,
         non cerca di indovinare i minimi e i massimi.
       </p>
+      <h3>Lo scoperto: lavorare anche quando i prezzi scendono</h3>
+      <p>
+        Dal 27 ottobre, su Bitcoin ed Ethereum, il bot usa la stessa regola anche al contrario.
+        Quando il prezzo scende <b>sotto il minimo dei 55 giorni</b> vende <b>allo scoperto</b>:
+        vende monete prese in prestito e le ricompra più tardi, quindi guadagna se il prezzo
+        continua a scendere e perde se risale. Chiude lo scoperto quando il prezzo torna
+        <b>sopra il massimo dei 20 giorni</b>. Prima, nei mercati in calo, il bot restava fermo in
+        liquidità anche per settimane.
+      </p>
+      <p>
+        Lo scoperto costa di più: oltre alla commissione, Kraken fa pagare il prestito ogni 4 ore
+        (0,01% per BTC, 0,02% per ETH) e il bot lo conta. L'oro resta solo in acquisto.
+        È possibile solo in simulazione: con soldi veri il bot non lo fa.
+      </p>
       <p>
         È una <b>prova</b>: dal 18 ottobre ha preso il posto delle medie mobili 10/30, che ora gira nel
         "laboratorio" per un confronto. Nei test sul passato rendeva meglio rispetto al rischio, ma
@@ -172,14 +186,14 @@
       <h3>Quando controlla</h3>
       <ul>
         <li><b>Alle 8 di ogni mattina</b> fa l'analisi completa: decide se comprare o vendere e manda il resoconto su Telegram e per email.</li>
-        <li><b>Ogni ora</b> controlla solo lo stop-loss: se scatta vende subito e ti avvisa. Non compra mai durante il giorno.</li>
+        <li><b>Ogni ora</b> controlla solo lo stop-loss e le uscite: se scattano chiude subito e ti avvisa. Non apre mai posizioni nuove durante il giorno.</li>
       </ul>
 
       <h3>Quanto rischia per volta</h3>
       <ul>
         <li>Ogni nuovo acquisto usa il <b>25%</b> del capitale — con BTC, ETH e oro tutti aperti il bot tiene al massimo il 75% investito e il 25% liquido.</li>
-        <li><b>Stop-loss all'8%</b>: se una posizione scende dell'8% dal prezzo di carico, il bot la chiude subito, a prescindere dal canale dei prezzi.</li>
-        <li><b>Dopo uno stop-loss aspetta</b>: non ricompra finché il prezzo non è sceso sotto il minimo dei 20 giorni e poi non ha rotto di nuovo il massimo dei 55. Così non rientra nello stesso calo che l'ha appena fatto uscire.</li>
+        <li><b>Stop-loss all'8%</b>: se una posizione va contro dell'8% (scende dopo un acquisto, sale dopo uno scoperto), il bot la chiude subito, a prescindere dal canale dei prezzi.</li>
+        <li><b>Dopo uno stop-loss aspetta</b>: non rientra nella stessa direzione finché il prezzo non è uscito dal canale dalla parte opposta (dopo un acquisto: sotto il minimo dei 20 giorni). Così non rientra nello stesso movimento che l'ha appena fatto uscire.</li>
         <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
         <li>Ogni operazione paga una commissione simulata dello <b>0,4%</b>, quella vera di Kraken per un conto piccolo (fino al 25 settembre era lo 0,1%, troppo ottimista).</li>
       </ul>
@@ -252,22 +266,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=9"></script>
-<script src="js/gate.js?v=9"></script>
-<script src="js/github.js?v=9"></script>
-<script src="js/prices.js?v=9"></script>
-<script src="js/demo.js?v=9"></script>
-<script src="js/signal.js?v=9"></script>
-<script src="js/equity.js?v=9"></script>
-<script src="js/currency.js?v=9"></script>
-<script src="js/chart.js?v=9"></script>
-<script src="js/router.js?v=9"></script>
-<script src="js/stats.js?v=9"></script>
-<script src="js/history.js?v=9"></script>
-<script src="js/view-stats.js?v=9"></script>
-<script src="js/compare.js?v=9"></script>
-<script src="js/alerts.js?v=9"></script>
-<script src="js/install.js?v=9"></script>
-<script src="js/app.js?v=9"></script>
+<script src="js/config.js?v=10"></script>
+<script src="js/gate.js?v=10"></script>
+<script src="js/github.js?v=10"></script>
+<script src="js/prices.js?v=10"></script>
+<script src="js/demo.js?v=10"></script>
+<script src="js/signal.js?v=10"></script>
+<script src="js/equity.js?v=10"></script>
+<script src="js/currency.js?v=10"></script>
+<script src="js/chart.js?v=10"></script>
+<script src="js/router.js?v=10"></script>
+<script src="js/stats.js?v=10"></script>
+<script src="js/history.js?v=10"></script>
+<script src="js/view-stats.js?v=10"></script>
+<script src="js/compare.js?v=10"></script>
+<script src="js/alerts.js?v=10"></script>
+<script src="js/install.js?v=10"></script>
+<script src="js/app.js?v=10"></script>
 </body>
 </html>
