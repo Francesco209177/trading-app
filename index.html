@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/style.css?v=11">
 </head>
 <body>
 
@@ -158,11 +158,20 @@
       <h3>Lo scoperto: lavorare anche quando i prezzi scendono</h3>
       <p>
         Dal 27 ottobre, su Bitcoin ed Ethereum, il bot usa la stessa regola anche al contrario.
-        Quando il prezzo scende <b>sotto il minimo dei 55 giorni</b> vende <b>allo scoperto</b>:
+        Quando il prezzo scende <b>sotto il minimo dei 55 giorni</b> e anche <b>sotto la media dei
+        200 giorni</b> vende <b>allo scoperto</b>:
         vende monete prese in prestito e le ricompra più tardi, quindi guadagna se il prezzo
         continua a scendere e perde se risale. Chiude lo scoperto quando il prezzo torna
         <b>sopra il massimo dei 20 giorni</b>. Prima, nei mercati in calo, il bot restava fermo in
         liquidità anche per settimane.
+      </p>
+      <p>
+        La condizione della media dei 200 giorni (dal 28 ottobre) serve a vendere allo scoperto solo
+        quando il mercato scende da mesi. Nei test su 9 anni, lo scoperto sempre attivo guadagnava nei
+        crolli ma perdeva negli anni di rialzo, perché scommetteva contro ribassi passeggeri che poi
+        ripartivano: in totale +518% contro +711% del solo acquisto. Con la media dei 200 giorni il
+        totale torna a +712%, e il bot resta fermo la metà dei giorni. Le regole restano queste fino a
+        fine gennaio, poi si confronta con il laboratorio.
       </p>
       <p>
         Lo scoperto costa di più: oltre alla commissione, Kraken fa pagare il prestito ogni 4 ore
@@ -266,22 +275,22 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=10"></script>
-<script src="js/gate.js?v=10"></script>
-<script src="js/github.js?v=10"></script>
-<script src="js/prices.js?v=10"></script>
-<script src="js/demo.js?v=10"></script>
-<script src="js/signal.js?v=10"></script>
-<script src="js/equity.js?v=10"></script>
-<script src="js/currency.js?v=10"></script>
-<script src="js/chart.js?v=10"></script>
-<script src="js/router.js?v=10"></script>
-<script src="js/stats.js?v=10"></script>
-<script src="js/history.js?v=10"></script>
-<script src="js/view-stats.js?v=10"></script>
-<script src="js/compare.js?v=10"></script>
-<script src="js/alerts.js?v=10"></script>
-<script src="js/install.js?v=10"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/config.js?v=11"></script>
+<script src="js/gate.js?v=11"></script>
+<script src="js/github.js?v=11"></script>
+<script src="js/prices.js?v=11"></script>
+<script src="js/demo.js?v=11"></script>
+<script src="js/signal.js?v=11"></script>
+<script src="js/equity.js?v=11"></script>
+<script src="js/currency.js?v=11"></script>
+<script src="js/chart.js?v=11"></script>
+<script src="js/router.js?v=11"></script>
+<script src="js/stats.js?v=11"></script>
+<script src="js/history.js?v=11"></script>
+<script src="js/view-stats.js?v=11"></script>
+<script src="js/compare.js?v=11"></script>
+<script src="js/alerts.js?v=11"></script>
+<script src="js/install.js?v=11"></script>
+<script src="js/app.js?v=11"></script>
 </body>
 </html>

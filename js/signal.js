@@ -8,7 +8,8 @@
        sotto il minimo degli ultimi 20 giorni   -> vende
        in mezzo                                 -> non cambia nulla
      Scoperto (dal 27/10/2026, solo BTC ed ETH): la stessa regola al contrario.
-       sotto il minimo degli ultimi 55 giorni   -> vende allo scoperto
+       sotto il minimo degli ultimi 55 giorni   -> vende allo scoperto,
+         ma solo se è anche sotto la media dei 200 giorni (dal 28/10/2026)
        sopra il massimo degli ultimi 20 giorni  -> chiude lo scoperto
    - Stop-loss: l'8% contro la posizione (sotto il carico per un acquisto,
      sopra il prezzo di vendita per uno scoperto). Il bot lo controlla
@@ -21,15 +22,15 @@
 
 const Signal = (() => {
   const DAY = 24 * 3600 * 1000;
-  const cache = {}; // pair -> { price, high, low, lowN, highM }
+  const cache = {}; // pair -> { price, high, low, lowN, highM, trend }
   let loadedAt = 0;
   let loading = null;
 
   // Scarica le candele giornaliere e ricalcola il canale.
   function refresh(pairs) {
     if (loading) return loading;
-    const { entry, exit } = CONFIG.strategy;
-    const from = Date.now() - (entry + 15) * DAY;
+    const { entry, exit, shortFilter = 0 } = CONFIG.strategy;
+    const from = Date.now() - (Math.max(entry, shortFilter) + 15) * DAY;
     loading = Promise.all(
       pairs.map(async (pair) => {
         const rows = await Prices.klines(pair, "1d", from);
@@ -44,6 +45,11 @@ const Signal = (() => {
           low: Math.min(...before.slice(-exit)),
           lowN: Math.min(...before.slice(-entry)), // sotto qui: scoperto
           highM: Math.max(...before.slice(-exit)), // sopra qui: chiude lo scoperto
+          // Media dei 200 giorni, compresa l'ultima chiusura (come il bot).
+          trend:
+            shortFilter && closes.length >= shortFilter
+              ? closes.slice(-shortFilter).reduce((a, b) => a + b, 0) / shortFilter
+              : null,
         };
       })
     ).then(() => {
@@ -60,9 +66,11 @@ const Signal = (() => {
     const c = cache[pair];
     if (!c) return null;
     const short = canShort(pair);
+    // Senza filtro lo scoperto è sempre permesso; con il filtro ma senza la media, no.
+    const bear = !CONFIG.strategy.shortFilter || (c.trend != null && c.price < c.trend);
     const signal =
-      c.price > c.high ? "long" : short && c.price < c.lowN ? "short" : c.price < c.low ? "flat" : "keep";
-    return { price: c.price, high: c.high, low: c.low, lowN: c.lowN, highM: c.highM, canShort: short, signal };
+      c.price > c.high ? "long" : short && bear && c.price < c.lowN ? "short" : c.price < c.low ? "flat" : "keep";
+    return { price: c.price, high: c.high, low: c.low, lowN: c.lowN, highM: c.highM, trend: c.trend, bear, canShort: short, signal };
   }
 
   // Cosa farà, detto a parole.

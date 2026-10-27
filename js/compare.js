@@ -69,12 +69,20 @@ const Compare = (() => {
             ? `<span>esce se scende del ${Fmt.money(toLow, 1)}%</span>`
             : `<span class="down">sotto il minimo: esce</span>`;
         } else if (s.canShort) {
+          const { shortFilter } = CONFIG.strategy;
           canale = `minimo ${entry}g ${Fmt.price(eur(s.lowN))} · massimo ${entry}g ${Fmt.price(eur(s.high))}`;
+          if (shortFilter && s.trend != null) canale += ` · media ${shortFilter}g ${Fmt.price(eur(s.trend))}`;
+          // Lo scoperto vale solo sotto la media dei 200 giorni.
+          const scoperto = s.bear
+            ? toLowN <= 0
+              ? "sotto il minimo: scoperto"
+              : `scoperto se scende del ${Fmt.money(toLowN, 1)}%`
+            : `niente scoperto finché resta sopra la media ${shortFilter}g`;
           stato = toHigh <= 0
             ? `<span class="up">sopra il massimo: compra</span>`
-            : toLowN <= 0
-            ? `<span class="up">sotto il minimo: scoperto</span>`
-            : `<span>compra se sale del ${Fmt.money(toHigh, 1)}% · scoperto se scende del ${Fmt.money(toLowN, 1)}%</span>`;
+            : s.bear && toLowN <= 0
+            ? `<span class="up">${scoperto}</span>`
+            : `<span>compra se sale del ${Fmt.money(toHigh, 1)}% · ${scoperto}</span>`;
         } else {
           stato = toHigh > 0
             ? `<span>compra se sale del ${Fmt.money(toHigh, 1)}%</span>`

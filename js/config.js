@@ -22,8 +22,9 @@ const CONFIG = {
 
   // Regole del bot (breakout Donchian 55/20), per mostrare stop-loss e segnale.
   // Devono combaciare con strategy/risk in config.yaml del bot.
-  // shortable = le coppie che il bot vende allo scoperto (dal 27/10/2026).
-  strategy: { entry: 55, exit: 20, stopLossPct: 0.08, shortable: ["BTC/USDT", "ETH/USDT"] },
+  // shortable = le coppie che il bot vende allo scoperto (dal 27/10/2026);
+  // shortFilter = lo scoperto si apre solo sotto la media di tanti giorni (dal 28/10/2026).
+  strategy: { entry: 55, exit: 20, stopLossPct: 0.08, shortable: ["BTC/USDT", "ETH/USDT"], shortFilter: 200 },
 
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,
