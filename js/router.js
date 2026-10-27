@@ -53,5 +53,13 @@ const Router = (() => {
     go(defaultView);
   }
 
-  return { register, go, init };
+  return {
+    register,
+    go,
+    init,
+    // La pagina aperta adesso (serve all'app Android per il tasto Indietro).
+    get current() {
+      return active;
+    },
+  };
 })();

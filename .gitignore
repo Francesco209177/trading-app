@@ -11,3 +11,8 @@ desktop.ini
 
 # Configurazione locale dell'editor (non serve nel repo pubblico)
 .claude/
+
+# App Android: build e chiavi di firma restano fuori dal repo
+android/build/
+*.keystore
+*.jks

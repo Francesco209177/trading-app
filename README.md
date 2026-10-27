@@ -60,6 +60,22 @@ operazioni) nel ramo **`dati`** di questo repo pubblico. Sito e app lo leggono d
 
 Le istruzioni qui sotto servono solo se si torna alla chiave.
 
+## App Android (APK)
+
+In `android/` c'è un'app minima che apre questo sito a schermo intero: niente Gradle,
+niente librerie, 88 KB. Siccome carica il sito da GitHub Pages, ogni miglioria al sito
+arriva anche nell'app senza bisogno di un nuovo APK.
+
+- Costruirla: `android/build.sh` → `~/Documenti/PortafoglioBot-<versione>.apk`
+  (servono `~/android-tools/sdk` e `~/android-tools/jdk`, e Pillow per le icone).
+- Nuova versione: alza `versionCode` e `versionName` in `android/AndroidManifest.xml`.
+- **Firma**: la chiave è in `~/PortafoglioBot-firma` (fuori dal repo, che è pubblico).
+  Non perderla: senza la stessa chiave il telefono non accetta l'aggiornamento e
+  bisogna disinstallare l'app.
+- Tasto Indietro del telefono: chiude le impostazioni, poi torna alla Home, e solo
+  dalla Home esce (usa `Router.current` in `js/router.js`).
+- I link esterni si aprono nel browser del telefono, non dentro l'app.
+
 ## Prima accensione (con la chiave, non più necessaria)
 
 ### 1. Crea la chiave di lettura
