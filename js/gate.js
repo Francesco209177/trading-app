@@ -92,6 +92,9 @@ const Gate = (() => {
     // La demo non salva niente: chiudendo la pagina si torna qui.
     demoBtn.addEventListener("click", () => enter(Demo.TOKEN));
 
+    // Con i dati pubblici la porta resta aperta: niente chiave da chiedere.
+    if (CONFIG.publicState) return enter(GitHub.PUBLIC);
+
     const saved = read();
     if (saved) enter(saved);
     else open();

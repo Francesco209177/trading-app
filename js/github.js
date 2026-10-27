@@ -1,5 +1,9 @@
 /* ============================================================
-   Lettura dello stato del bot dal repo PRIVATO su GitHub.
+   Lettura dello stato del bot.
+
+   Di norma (dal 27/10/2026) dalla copia PUBBLICA che il bot pubblica
+   ogni ora nel ramo "dati" del repo del sito: nessuna chiave.
+   In alternativa, con una chiave, dal repo PRIVATO su GitHub.
 
    Il file state/portfolio.json viene aggiornato dal bot nel cloud
    (al massimo una volta ogni ora). Lo rileggiamo ogni minuto usando
@@ -14,8 +18,13 @@ class AuthError extends Error {}
 const GitHub = (() => {
   const URL_STATE = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${CONFIG.path}`;
 
+  // "Chiave" finta che dice all'app di usare i dati pubblici.
+  const PUBLIC = "__pubblico__";
+  const isPublic = (token) => token === PUBLIC;
+
   let etag = null;
   let last = null;
+  let lastText = null;
   let lastFetch = null;
 
   function headers(token, extra) {
@@ -46,14 +55,31 @@ const GitHub = (() => {
 
   // Usata dalla schermata della chiave: una richiesta di prova.
   async function check(token) {
-    if (Demo.is(token)) return true;
+    if (Demo.is(token) || isPublic(token)) return true;
     const res = await fetch(URL_STATE, { headers: headers(token), cache: "no-store" });
     if (!res.ok) throw explain(res.status);
     return true;
   }
 
+  // Dati pubblici: nessuna chiave, nessun limite di richieste. Il file si
+  // confronta col precedente per sapere se è cambiato.
+  async function loadPublic() {
+    const res = await fetch(`${CONFIG.publicState}?t=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) throw new Error(`GitHub ha risposto ${res.status}.`);
+    const text = await res.text();
+    const changed = text !== lastText;
+    if (changed) {
+      last = JSON.parse(text);
+      lastText = text;
+    }
+    lastFetch = new Date();
+    return { changed, state: last, at: lastFetch };
+  }
+
   // Scarica lo stato. changed=false significa "identico a prima" (304).
   async function load(token) {
+    if (isPublic(token)) return loadPublic();
+
     // Modalità demo: dati inventati, nessuna richiesta a GitHub.
     if (Demo.is(token)) {
       const res = await Demo.load();
@@ -79,6 +105,8 @@ const GitHub = (() => {
   }
 
   return {
+    PUBLIC,
+    isPublic,
     check,
     load,
     get lastFetch() {

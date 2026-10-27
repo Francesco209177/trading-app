@@ -10,6 +10,11 @@ const CONFIG = {
   repo: "trading-bot",
   path: "state/portfolio.json",
 
+  // Dal 27/10/2026 il bot copia ogni ora il portafoglio simulato (solo quello:
+  // niente codice né segreti) nel ramo "dati" di questo repo PUBBLICO, così
+  // sito e app lo leggono senza chiave. Stringa vuota = si torna alla chiave.
+  publicState: "https://raw.githubusercontent.com/Francesco209177/trading-app/dati/portfolio.json",
+
   // Le coppie che il bot segue (le stesse di "symbols" in config.yaml):
   // servono per mostrare prezzi e segnale anche di quelle non ancora comprate.
   pairs: ["BTC/USDT", "ETH/USDT", "PAXG/USD"],

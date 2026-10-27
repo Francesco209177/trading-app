@@ -53,10 +53,22 @@ const App = (() => {
   async function start(key) {
     token = key;
     demo = Demo.is(key);
-    el.setRepo.textContent = demo ? "esempio (demo)" : `${CONFIG.owner}/${CONFIG.repo}`;
+    const pubblico = GitHub.isPublic(key);
+    el.setRepo.textContent = demo
+      ? "esempio (demo)"
+      : pubblico
+      ? "copia pubblica del bot (senza chiave)"
+      : `${CONFIG.owner}/${CONFIG.repo}`;
     if (demo) showDemoBanner();
+    if (pubblico) document.getElementById("forgetBtn").hidden = true;
 
-    const ok = await refreshState();
+    let ok = await refreshState();
+    // Se al primo avvio la rete non c'è, non c'è ancora niente da mostrare:
+    // si riprova ogni 10 secondi finché i dati arrivano.
+    while (ok && !state) {
+      await new Promise((r) => setTimeout(r, 10000));
+      ok = await refreshState();
+    }
     if (!ok) return;
 
     homeChart = Chart.create(el.chart, { onScrub: handleScrub });

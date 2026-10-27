@@ -43,7 +43,24 @@ tuo browser.
 
 ---
 
-## Prima accensione
+## Dati pubblici, senza chiave (dal 27/10/2026)
+
+Su richiesta, il sito non chiede più la chiave. Ogni ora il bot copia **solo** il
+portafoglio simulato (`state/portfolio.json`: liquidità, posizioni, storico del valore,
+operazioni) nel ramo **`dati`** di questo repo pubblico. Sito e app lo leggono da
+`https://raw.githubusercontent.com/Francesco209177/trading-app/dati/portfolio.json`.
+
+- Il codice del bot e i suoi segreti (Telegram, email) restano nel repo **privato**.
+- Chiunque abbia il link vede il portafoglio simulato: sono soldi finti, ma è una scelta.
+- Il ramo `dati` tiene un solo commit, riscritto a ogni pubblicazione.
+- Il bot scrive qui con una *deploy key* (`DATI_DEPLOY_KEY` tra i segreti di
+  `trading-bot`) che vale solo per questo repo.
+- Per tornare alla chiave: in `js/config.js` metti `publicState: ""` e togli il passo
+  "Pubblica i dati per l'app" dal workflow del bot (e la deploy key da questo repo).
+
+Le istruzioni qui sotto servono solo se si torna alla chiave.
+
+## Prima accensione (con la chiave, non più necessaria)
 
 ### 1. Crea la chiave di lettura
 
@@ -88,7 +105,8 @@ una volta per telefono e una volta per PC.
 - Nota: tutti i siti che pubblichi su `<tuo-utente>.github.io` condividono lo stesso
   `localStorage`. La chiave è in sola lettura su un repo senza segreti, quindi il rischio è
   minimo, ma tienilo presente se pubblichi altri siti lì.
-- Dentro `trading-app` non va mai messo un file di stato del portafoglio: il repo è pubblico.
+- Il ramo `main` di `trading-app` contiene solo codice. Il portafoglio simulato sta nel
+  ramo `dati`, pubblico per scelta (vedi sopra).
 
 ## Se qualcosa non va
 
