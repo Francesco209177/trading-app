@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=14">
+<link rel="stylesheet" href="css/style.css?v=15">
 </head>
 <body>
 
@@ -228,6 +228,12 @@
     </div>
   </div>
 
+  <!-- ---------- CRYPTO (bot principale, stessa impostazione di Azioni) ---------- -->
+  <div id="view-crypto" class="view" hidden>
+    <h1 class="page-title">Crypto <small class="muted-small">(Bitcoin, Ethereum, oro)</small></h1>
+    <div id="cryptoContent"></div>
+  </div>
+
   <!-- ---------- AZIONI (laboratorio azionario) ---------- -->
   <div id="view-stocks" class="view" hidden>
     <h1 class="page-title">Azioni <small class="muted-small">(S&amp;P 500, Nasdaq 100, Italia)</small></h1>
@@ -239,6 +245,10 @@
     <button class="navbtn is-active" data-view="home" aria-label="Home">
       <svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9h5v-6h2v6h5v-9"/></svg>
       <span>Home</span>
+    </button>
+    <button class="navbtn" data-view="crypto" aria-label="Crypto">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M10 8h3.2a2 2 0 0 1 0 4H10m0 0h3.6a2 2 0 0 1 0 4H10V8m1.2-1.6v1.6m0 8v1.6"/></svg>
+      <span>Crypto</span>
     </button>
     <button class="navbtn" data-view="stocks" aria-label="Azioni">
       <svg viewBox="0 0 24 24"><path d="M4 19h16"/><path d="M5 15l4-5 4 3 6-7"/><path d="M15 6h4v4"/></svg>
@@ -285,23 +295,24 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=14"></script>
-<script src="js/gate.js?v=14"></script>
-<script src="js/github.js?v=14"></script>
-<script src="js/prices.js?v=14"></script>
-<script src="js/demo.js?v=14"></script>
-<script src="js/signal.js?v=14"></script>
-<script src="js/equity.js?v=14"></script>
-<script src="js/currency.js?v=14"></script>
-<script src="js/chart.js?v=14"></script>
-<script src="js/router.js?v=14"></script>
-<script src="js/stats.js?v=14"></script>
-<script src="js/history.js?v=14"></script>
-<script src="js/view-stats.js?v=14"></script>
-<script src="js/compare.js?v=14"></script>
-<script src="js/stocks.js?v=14"></script>
-<script src="js/alerts.js?v=14"></script>
-<script src="js/install.js?v=14"></script>
-<script src="js/app.js?v=14"></script>
+<script src="js/config.js?v=15"></script>
+<script src="js/gate.js?v=15"></script>
+<script src="js/github.js?v=15"></script>
+<script src="js/prices.js?v=15"></script>
+<script src="js/demo.js?v=15"></script>
+<script src="js/signal.js?v=15"></script>
+<script src="js/equity.js?v=15"></script>
+<script src="js/currency.js?v=15"></script>
+<script src="js/chart.js?v=15"></script>
+<script src="js/router.js?v=15"></script>
+<script src="js/stats.js?v=15"></script>
+<script src="js/history.js?v=15"></script>
+<script src="js/view-stats.js?v=15"></script>
+<script src="js/compare.js?v=15"></script>
+<script src="js/stocks.js?v=15"></script>
+<script src="js/crypto.js?v=15"></script>
+<script src="js/alerts.js?v=15"></script>
+<script src="js/install.js?v=15"></script>
+<script src="js/app.js?v=15"></script>
 </body>
 </html>
