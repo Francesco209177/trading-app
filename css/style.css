@@ -667,3 +667,9 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 /* punto di partenza in euro, sotto il numero grande */
 .start-line { margin-top: 6px; color: var(--muted); font-size: .8rem; font-variant-numeric: tabular-nums; }
 .start-line[hidden] { display: none; }
+
+/* ---------------- pagina Azioni ---------------- */
+.tile-sub { color: var(--muted); font-size: .74rem; margin-top: 3px; font-variant-numeric: tabular-nums; }
+.stat-tile .value.up, .summary-row .up { color: var(--green); }
+.stat-tile .value.down { color: var(--red); }
+.navbtn span { white-space: nowrap; }

@@ -15,6 +15,10 @@ const CONFIG = {
   // sito e app lo leggono senza chiave. Stringa vuota = si torna alla chiave.
   publicState: "https://raw.githubusercontent.com/Francesco209177/trading-app/dati/portfolio.json",
 
+  // Riepilogo del laboratorio azionario (dal 16/11/2026), pubblicato dal bot
+  // nello stesso ramo "dati": pagina "Azioni".
+  labView: "https://raw.githubusercontent.com/Francesco209177/trading-app/dati/lab_view.json",
+
   // Le coppie che il bot segue (le stesse di "symbols" in config.yaml):
   // servono per mostrare prezzi e segnale anche di quelle non ancora comprate.
   pairs: ["BTC/USDT", "ETH/USDT", "PAXG/USD"],
