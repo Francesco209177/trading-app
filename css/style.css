@@ -671,5 +671,23 @@ input[type=password]:focus { outline: none; border-color: var(--accent); }
 /* ---------------- pagina Azioni ---------------- */
 .tile-sub { color: var(--muted); font-size: .74rem; margin-top: 3px; font-variant-numeric: tabular-nums; }
 .stat-tile .value.up, .summary-row .up { color: var(--green); }
-.stat-tile .value.down { color: var(--red); }
+.stat-tile .value.down, .summary-row .down { color: var(--red); }
 .navbtn span { white-space: nowrap; }
+
+/* ---------------- termometro (dal 17/11/2026) ----------------
+   Una riga sotto il numero grande: di quanto si è sotto il massimo
+   e se è un calo che i test avevano già messo in conto. */
+.thermo {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 7px 11px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+}
+.thermo b { color: var(--text); font-weight: 600; }
+.thermo.warn { color: #f5cf6b; border-color: rgba(240, 180, 41, .35); background: rgba(240, 180, 41, .1); }

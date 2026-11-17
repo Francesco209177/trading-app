@@ -35,6 +35,12 @@ const CONFIG = {
   // shortFilter = lo scoperto si apre solo sotto la media di tanti giorni (dal 28/10/2026).
   strategy: { entry: 55, exit: 20, stopLossPct: 0.08, shortable: ["BTC/USDT", "ETH/USDT"], shortFilter: 200 },
 
+  // Termometro (dal 17/11/2026): il calo più profondo visto nei test del bot
+  // principale con le regole attuali, in %. Deve combaciare con
+  // expected.max_drawdown_pct in config.yaml del bot (con le modifiche pronte
+  // per il 31/01/2027 diventa 22). Per il laboratorio il numero arriva dal bot.
+  expect: { cryptoMaxDd: 32 },
+
   // Ogni quanto richiedere lo stato aggiornato al repo (il bot lo aggiorna al massimo ogni ora).
   refreshMs: 60_000,
 
@@ -107,4 +113,29 @@ const Fmt = {
 
   dateTime: (d) =>
     d.toLocaleDateString("it-IT", { day: "2-digit", month: "short" }) + " " + Fmt.time(d),
+};
+
+/* ------------------------------------------------------------
+   Il "termometro": di quanto il valore è sotto il suo massimo e
+   se è normale rispetto ai test. Serve a non spaventarsi per un
+   calo che i test avevano già messo in conto.
+   dd = calo attuale in %, expected = calo più profondo dei test.
+   ------------------------------------------------------------ */
+
+const Thermo = {
+  // Calo in % rispetto al massimo tra fondo di partenza, storico e valore attuale.
+  drawdown(start, history, equity) {
+    const peak = Math.max(start, equity, ...(history || []).map((h) => h.equity));
+    return peak > 0 ? Math.max(0, (1 - equity / peak) * 100) : 0;
+  },
+
+  html(dd, expected) {
+    if (dd == null || !Number.isFinite(dd)) return "";
+    if (dd < 0.05) return `<div class="thermo"><b>Termometro</b> · al massimo di sempre</div>`;
+    const base = `${Fmt.money(dd, 1)}% sotto il massimo`;
+    if (!expected) return `<div class="thermo"><b>Termometro</b> · ${base}</div>`;
+    return dd <= expected
+      ? `<div class="thermo"><b>Termometro</b> · ${base} · nei test fino al ${Fmt.money(expected, 0)}%: nella norma</div>`
+      : `<div class="thermo warn"><b>Termometro</b> · ${base} · più del peggior calo dei test (${Fmt.money(expected, 0)}%)</div>`;
+  },
 };

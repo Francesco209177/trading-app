@@ -99,6 +99,7 @@ const CryptoView = (() => {
           <span class="delta ${cls(pnl)}">${Fmt.signedCur(eur(pnl))} (${Fmt.pct(pnlPct)}) da inizio</span>
           <span class="delta muted">${usdt(equity)} · 1 ${CONFIG.quote} = ${Fmt.money(Prices.eurRate, 4)} €</span>
         </div>
+        ${Thermo.html(Thermo.drawdown(start, state.history, equity), (CONFIG.expect || {}).cryptoMaxDd)}
       </section>
       <div class="stat-grid">${tiles}</div>
       <section class="block"><h2>Posizioni</h2>${positions}</section>

@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=15">
+<link rel="stylesheet" href="css/style.css?v=16">
 </head>
 <body>
 
@@ -170,8 +170,9 @@
         quando il mercato scende da mesi. Nei test su 9 anni, lo scoperto sempre attivo guadagnava nei
         crolli ma perdeva negli anni di rialzo, perché scommetteva contro ribassi passeggeri che poi
         ripartivano: in totale +518% contro +711% del solo acquisto. Con la media dei 200 giorni il
-        totale torna a +712%, e il bot resta fermo la metà dei giorni. Le regole restano queste fino a
-        fine gennaio, poi si confronta con il laboratorio.
+        totale torna a +712%, e il bot resta fermo la metà dei giorni. Le regole restano queste fino al
+        <b>31 gennaio 2027</b>: quel giorno si decide se attivare due modifiche già provate sui dati
+        (niente nuovi scoperti e quote calcolate sulla volatilità), per ora spente.
       </p>
       <p>
         Lo scoperto costa di più: oltre alla commissione, Kraken fa pagare il prestito ogni 4 ore
@@ -179,9 +180,9 @@
         È possibile solo in simulazione: con soldi veri il bot non lo fa.
       </p>
       <p>
-        È una <b>prova</b>: dal 18 ottobre ha preso il posto delle medie mobili 10/30, che ora gira nel
-        "laboratorio" per un confronto. Nei test sul passato rendeva meglio rispetto al rischio, ma
-        negli anni più recenti le medie hanno fatto meglio: per questo si guarda come va dal vivo.
+        È una <b>prova</b>: dal 18 ottobre ha preso il posto delle medie mobili 10/30. Nei test sul
+        passato rendeva meglio rispetto al rischio, ma negli anni più recenti le medie hanno fatto
+        meglio: per questo si guarda come va dal vivo.
       </p>
 
       <h3>Perché anche l'oro</h3>
@@ -195,7 +196,7 @@
       <h3>Quando controlla</h3>
       <ul>
         <li><b>Alle 8 di ogni mattina</b> fa l'analisi completa: decide se comprare o vendere e manda il resoconto su Telegram e per email.</li>
-        <li><b>Ogni ora</b> controlla solo lo stop-loss e le uscite: se scattano chiude subito e ti avvisa. Non apre mai posizioni nuove durante il giorno.</li>
+        <li><b>Durante il giorno</b> (circa ogni 6 ore) controlla solo lo stop-loss e le uscite: se scattano chiude subito e ti avvisa. Non apre mai posizioni nuove durante il giorno.</li>
       </ul>
 
       <h3>Quanto rischia per volta</h3>
@@ -212,6 +213,29 @@
         Il canale dei prezzi è calcolato su base giornaliera: servono giorni, non minuti, per
         cambiare direzione. Per questo il bot può restare fermo sulle stesse posizioni per
         settimane — non è pigrizia, è la strategia che funziona così.
+      </p>
+
+      <h3>Il laboratorio azionario (pagina Azioni)</h3>
+      <p>
+        Un secondo bot, sempre in simulazione, lavora su tre fondi di borsa: S&amp;P 500, Nasdaq 100 e
+        Italia. Dal 17 novembre ha <b>due motori</b>, ognuno con 1.000 $ finti:
+      </p>
+      <ul>
+        <li><b>Cali</b>: compra dopo un calo forte di pochi giorni e rivende appena il prezzo torna sopra la media dei 5 giorni. Tante operazioni brevi.</li>
+        <li><b>Trend</b>: resta investito finché il prezzo è sopra la media dei 200 giorni ed esce quando scende sotto. Poche operazioni lunghe.</li>
+      </ul>
+      <p>
+        Nei test dal 2020 i due insieme hanno reso il 7,9% l'anno con un calo massimo del 19%, contro
+        il 4,7% e il 23% del solo motore Cali: uno lavora quando l'altro è fermo. Il laboratorio opera
+        una volta per seduta, quando la borsa di New York è aperta.
+      </p>
+
+      <h3>Il termometro</h3>
+      <p>
+        Nelle pagine Crypto e Azioni, sotto il numero grande, una riga dice di quanto il bot è sotto
+        il suo massimo e lo confronta con il calo più profondo visto nei test (32% per il bot
+        principale, 20% per il laboratorio). Finché resta sotto quel numero è un calo già messo in
+        conto. I test non sono una garanzia: dal vivo può andare anche peggio.
       </p>
 
       <h3>Cosa mostra questa app</h3>
@@ -295,24 +319,24 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=15"></script>
-<script src="js/gate.js?v=15"></script>
-<script src="js/github.js?v=15"></script>
-<script src="js/prices.js?v=15"></script>
-<script src="js/demo.js?v=15"></script>
-<script src="js/signal.js?v=15"></script>
-<script src="js/equity.js?v=15"></script>
-<script src="js/currency.js?v=15"></script>
-<script src="js/chart.js?v=15"></script>
-<script src="js/router.js?v=15"></script>
-<script src="js/stats.js?v=15"></script>
-<script src="js/history.js?v=15"></script>
-<script src="js/view-stats.js?v=15"></script>
-<script src="js/compare.js?v=15"></script>
-<script src="js/stocks.js?v=15"></script>
-<script src="js/crypto.js?v=15"></script>
-<script src="js/alerts.js?v=15"></script>
-<script src="js/install.js?v=15"></script>
-<script src="js/app.js?v=15"></script>
+<script src="js/config.js?v=16"></script>
+<script src="js/gate.js?v=16"></script>
+<script src="js/github.js?v=16"></script>
+<script src="js/prices.js?v=16"></script>
+<script src="js/demo.js?v=16"></script>
+<script src="js/signal.js?v=16"></script>
+<script src="js/equity.js?v=16"></script>
+<script src="js/currency.js?v=16"></script>
+<script src="js/chart.js?v=16"></script>
+<script src="js/router.js?v=16"></script>
+<script src="js/stats.js?v=16"></script>
+<script src="js/history.js?v=16"></script>
+<script src="js/view-stats.js?v=16"></script>
+<script src="js/compare.js?v=16"></script>
+<script src="js/stocks.js?v=16"></script>
+<script src="js/crypto.js?v=16"></script>
+<script src="js/alerts.js?v=16"></script>
+<script src="js/install.js?v=16"></script>
+<script src="js/app.js?v=16"></script>
 </body>
 </html>
