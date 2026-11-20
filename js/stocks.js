@@ -5,6 +5,8 @@
    e Italia (EWI). Dal 17/11/2026 ha due motori, ognuno con 1.000 $ finti:
    "Cali" (compra i cali forti) e "Trend" (investito sopra la media a 200
    giorni). Qui si vede il totale, con il dettaglio per motore.
+   Dal 20/11/2026 il Cali lavora solo su S&P 500 e Nasdaq 100 (sull'Italia
+   nei test perdeva): ogni motore porta l'elenco dei suoi mercati.
 
    I prezzi delle azioni non si possono leggere da qui (Yahoo blocca le
    richieste dai siti), quindi e' il bot a pubblicare a ogni giro un
@@ -75,7 +77,8 @@ const Stocks = (() => {
               (m) => `<div class="summary-row">
                 <b>${esc(m.label)}</b> · ${Fmt.cur(eur(m.equity))}
                 <span class="${cls(m.pnl)}">${Fmt.signedCur(eur(m.pnl))} (${Fmt.pct(m.pnl_pct)})</span>
-                <div class="tile-sub">${esc(m.strategy)} · ${m.n_pos ? plural(m.n_pos) : "nessuna posizione"}</div>
+                <div class="tile-sub">${esc(m.strategy)}</div>
+                <div class="tile-sub">${m.markets && m.markets.length ? `Mercati: ${esc(m.markets.join(", "))} · ` : ""}${m.n_pos ? plural(m.n_pos) : "nessuna posizione"}</div>
               </div>`
             )
             .join("")}</div></section>`
