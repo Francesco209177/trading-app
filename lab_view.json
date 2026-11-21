@@ -1,0 +1,212 @@
+{
+ "updated": "2026-11-21T18:16:23+01:00",
+ "market_open": false,
+ "quote": "USD",
+ "usd_eur": 0.9111617312072894,
+ "strategy": "Cali: Compra i cali: RSI(3) sotto 10, vende quando la chiusura torna sopra la media di 5 giorni · Trend: Segue il trend: investito quando la chiusura è sopra la media di 200 giorni",
+ "start": 2000.0,
+ "equity": 1923.1033,
+ "cash": 1001.8225,
+ "invested": 921.2808,
+ "cost": 988.3644,
+ "pnl": -76.8967,
+ "pnl_pct": -3.8448,
+ "n_pos": 3,
+ "peak": 2000.24,
+ "drawdown_pct": 3.86,
+ "expected_max_drawdown_pct": 20,
+ "motors": [
+  {
+   "name": "cali",
+   "label": "Cali",
+   "markets": [
+    "S&P 500",
+    "Nasdaq 100"
+   ],
+   "strategy": "Compra i cali: RSI(3) sotto 10, vende quando la chiusura torna sopra la media di 5 giorni",
+   "start": 1000.0,
+   "equity": 932.3887,
+   "pnl": -67.6113,
+   "pnl_pct": -6.7611,
+   "n_pos": 3
+  },
+  {
+   "name": "trend",
+   "label": "Trend",
+   "markets": [
+    "S&P 500",
+    "Nasdaq 100",
+    "Italia"
+   ],
+   "strategy": "Segue il trend: investito quando la chiusura è sopra la media di 200 giorni",
+   "start": 1000.0,
+   "equity": 990.7146,
+   "pnl": -9.2854,
+   "pnl_pct": -0.9285,
+   "n_pos": 0
+  }
+ ],
+ "markets": [
+  {
+   "symbol": "SPY/USD",
+   "name": "S&P 500",
+   "price": 689.81,
+   "action": "HOLD",
+   "reason": "Cali: In posizione: chiusura (689.81) ancora sotto la media di 5 giorni (721.65), si aspetta il rimbalzo.  Trend: Chiusura (689.81) sotto la media di 200 giorni (732.76): trend ribassista, resta fuori.",
+   "position": {
+    "qty": 0.4468208983831272,
+    "short": false,
+    "entry_price": 737.09,
+    "value": 308.22152391366495,
+    "pnl": -21.125692075554294,
+    "pnl_pct": -6.4144134366224055
+   },
+   "motors": [
+    {
+     "label": "Cali",
+     "action": "HOLD",
+     "reason": "In posizione: chiusura (689.81) ancora sotto la media di 5 giorni (721.65), si aspetta il rimbalzo.",
+     "in_position": true
+    },
+    {
+     "label": "Trend",
+     "action": "HOLD",
+     "reason": "Chiusura (689.81) sotto la media di 200 giorni (732.76): trend ribassista, resta fuori.",
+     "in_position": false
+    }
+   ]
+  },
+  {
+   "symbol": "QQQ/USD",
+   "name": "Nasdaq 100",
+   "price": 608.45,
+   "action": "HOLD",
+   "reason": "Cali: In posizione: chiusura (608.45) ancora sotto la media di 5 giorni (646.34), si aspetta il rimbalzo.  Trend: Chiusura (608.45) sotto la media di 200 giorni (683.06): trend ribassista, resta fuori.",
+   "position": {
+    "qty": 0.4991924578471251,
+    "short": false,
+    "entry_price": 659.76,
+    "value": 303.7336509770833,
+    "pnl": -25.613565012135965,
+    "pnl_pct": -7.777070449860549
+   },
+   "motors": [
+    {
+     "label": "Cali",
+     "action": "HOLD",
+     "reason": "In posizione: chiusura (608.45) ancora sotto la media di 5 giorni (646.34), si aspetta il rimbalzo.",
+     "in_position": true
+    },
+    {
+     "label": "Trend",
+     "action": "HOLD",
+     "reason": "Chiusura (608.45) sotto la media di 200 giorni (683.06): trend ribassista, resta fuori.",
+     "in_position": false
+    }
+   ]
+  },
+  {
+   "symbol": "EWI/USD",
+   "name": "Italia",
+   "price": 53.9,
+   "action": "HOLD",
+   "reason": "Cali: In posizione: chiusura (53.90) ancora sotto la media di 5 giorni (55.94), si aspetta il rimbalzo. Mercato tolto a questo motore: dopo la vendita non lo ricompra.  Trend: Chiusura (53.90) sotto la media di 200 giorni (58.28): trend ribassista, resta fuori.",
+   "position": {
+    "qty": 5.738880668465489,
+    "short": false,
+    "entry_price": 57.445,
+    "value": 309.3256680302899,
+    "pnl": -20.34433196971017,
+    "pnl_pct": -6.171120201932286
+   },
+   "motors": [
+    {
+     "label": "Cali",
+     "action": "HOLD",
+     "reason": "In posizione: chiusura (53.90) ancora sotto la media di 5 giorni (55.94), si aspetta il rimbalzo. Mercato tolto a questo motore: dopo la vendita non lo ricompra.",
+     "in_position": true
+    },
+    {
+     "label": "Trend",
+     "action": "HOLD",
+     "reason": "Chiusura (53.90) sotto la media di 200 giorni (58.28): trend ribassista, resta fuori.",
+     "in_position": false
+    }
+   ]
+  }
+ ],
+ "trades": [
+  {
+   "time": "2026-11-16T18:36:15+00:00",
+   "symbol": "EWI/USD",
+   "side": "BUY",
+   "qty": 5.7388806685,
+   "price": 57.445,
+   "fee": 0.33,
+   "value": 329.67,
+   "motor": "Cali"
+  },
+  {
+   "time": "2026-11-17T15:23:56+00:00",
+   "symbol": "SPY/USD",
+   "side": "BUY",
+   "qty": 0.4468208984,
+   "price": 737.09,
+   "fee": 0.09883381,
+   "value": 329.35,
+   "motor": "Cali"
+  },
+  {
+   "time": "2026-11-17T15:23:56+00:00",
+   "symbol": "QQQ/USD",
+   "side": "BUY",
+   "qty": 0.4991924578,
+   "price": 659.76,
+   "fee": 0.09883381,
+   "value": 329.35,
+   "motor": "Cali"
+  },
+  {
+   "time": "2026-11-17T15:23:56+00:00",
+   "symbol": "SPY/USD",
+   "side": "BUY",
+   "qty": 0.4475722096,
+   "price": 737.09,
+   "fee": 0.099,
+   "value": 329.9,
+   "motor": "Trend"
+  },
+  {
+   "time": "2026-11-19T20:22:31+00:00",
+   "symbol": "SPY/USD",
+   "side": "SELL",
+   "qty": 0.4475722096,
+   "price": 716.78,
+   "fee": 0.09624324,
+   "value": 320.81,
+   "motor": "Trend"
+  }
+ ],
+ "history": [
+  {
+   "time": "2026-11-16T20:12:45+00:00",
+   "equity": 2000.24
+  },
+  {
+   "time": "2026-11-17T21:38:43+00:00",
+   "equity": 1991.2
+  },
+  {
+   "time": "2026-11-18T21:16:55+00:00",
+   "equity": 1984.39
+  },
+  {
+   "time": "2026-11-19T20:22:31+00:00",
+   "equity": 1962.63
+  },
+  {
+   "time": "2026-11-21T01:17:45+00:00",
+   "equity": 1923.1
+  }
+ ]
+}
