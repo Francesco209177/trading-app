@@ -9,7 +9,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/style.css?v=17">
+<link rel="stylesheet" href="css/style.css?v=18">
 </head>
 <body>
 
@@ -155,9 +155,16 @@
         il trend si considera finito e il bot vende. In mezzo al canale non fa niente. Segue il trend,
         non cerca di indovinare i minimi e i massimi.
       </p>
-      <h3>Lo scoperto: lavorare anche quando i prezzi scendono</h3>
+      <h3>Lo scoperto (dal 27 novembre niente nuovi)</h3>
       <p>
-        Dal 27 ottobre, su Bitcoin ed Ethereum, il bot usa la stessa regola anche al contrario.
+        <b>Dal 27 novembre il bot non apre più nuovi scoperti.</b> Quelli già aperti quel giorno
+        (Ethereum dal 27 ottobre, Bitcoin dal 13 novembre) restano e si chiudono con le regole
+        qui sotto. Nei test su 9 anni senza nuovi scoperti il bot rendeva di più (+16% l'anno
+        contro +12,4%) e perdeva meno nei momenti brutti (calo massimo 23% contro 32%): lo scoperto
+        aiutava solo negli anni di crollo, come il 2018 e quest'anno.
+      </p>
+      <p>
+        Dal 27 ottobre al 27 novembre, su Bitcoin ed Ethereum, il bot usava la stessa regola anche al contrario.
         Quando il prezzo scende <b>sotto il minimo dei 55 giorni</b> e anche <b>sotto la media dei
         200 giorni</b> vende <b>allo scoperto</b>:
         vende monete prese in prestito e le ricompra più tardi, quindi guadagna se il prezzo
@@ -170,9 +177,9 @@
         quando il mercato scende da mesi. Nei test su 9 anni, lo scoperto sempre attivo guadagnava nei
         crolli ma perdeva negli anni di rialzo, perché scommetteva contro ribassi passeggeri che poi
         ripartivano: in totale +518% contro +711% del solo acquisto. Con la media dei 200 giorni il
-        totale torna a +712%, e il bot resta fermo la metà dei giorni. Le regole restano queste fino al
-        <b>31 gennaio 2027</b>: quel giorno si decide se attivare due modifiche già provate sui dati
-        (niente nuovi scoperti e quote calcolate sulla volatilità), per ora spente.
+        totale torna a +712%, e il bot resta fermo la metà dei giorni. Le due modifiche previste per
+        il <b>31 gennaio 2027</b> (niente nuovi scoperti e quote calcolate sulla volatilità) sono
+        state attivate prima, il 27 novembre: il 31 gennaio resta il giorno della prima verifica.
       </p>
       <p>
         Lo scoperto costa di più: oltre alla commissione, Kraken fa pagare il prestito ogni 4 ore
@@ -201,7 +208,7 @@
 
       <h3>Quanto rischia per volta</h3>
       <ul>
-        <li>Ogni nuovo acquisto usa il <b>25%</b> del capitale — con BTC, ETH e oro tutti aperti il bot tiene al massimo il 75% investito e il 25% liquido.</li>
+        <li><b>Quota in base alla volatilità</b> (dal 27 novembre): ogni nuovo acquisto usa una parte del capitale che dipende da quanto quel mercato oscilla, tra il 5% e il 50%. Meno soldi su quello agitato, di più su quello tranquillo: a fine novembre circa il 32% per Bitcoin, il 23% per Ethereum e il 50% per l'oro. Così ogni mercato pesa in modo simile sul rischio. Prima era sempre il 25%. Nei test, insieme a "niente nuovi scoperti", +20,6% l'anno con un calo massimo del 22%.</li>
         <li><b>Stop-loss all'8%</b>: se una posizione va contro dell'8% (scende dopo un acquisto, sale dopo uno scoperto), il bot la chiude subito, a prescindere dal canale dei prezzi.</li>
         <li><b>Dopo uno stop-loss aspetta</b>: non rientra nella stessa direzione finché il prezzo non è uscito dal canale dalla parte opposta (dopo un acquisto: sotto il minimo dei 20 giorni). Così non rientra nello stesso movimento che l'ha appena fatto uscire.</li>
         <li><b>Take-profit disattivato</b>: il bot non vende mai "perché ha guadagnato abbastanza" — lascia correre i guadagni finché il trend regge.</li>
@@ -325,24 +332,24 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
-<script src="js/config.js?v=17"></script>
-<script src="js/gate.js?v=17"></script>
-<script src="js/github.js?v=17"></script>
-<script src="js/prices.js?v=17"></script>
-<script src="js/demo.js?v=17"></script>
-<script src="js/signal.js?v=17"></script>
-<script src="js/equity.js?v=17"></script>
-<script src="js/currency.js?v=17"></script>
-<script src="js/chart.js?v=17"></script>
-<script src="js/router.js?v=17"></script>
-<script src="js/stats.js?v=17"></script>
-<script src="js/history.js?v=17"></script>
-<script src="js/view-stats.js?v=17"></script>
-<script src="js/compare.js?v=17"></script>
-<script src="js/stocks.js?v=17"></script>
-<script src="js/crypto.js?v=17"></script>
-<script src="js/alerts.js?v=17"></script>
-<script src="js/install.js?v=17"></script>
-<script src="js/app.js?v=17"></script>
+<script src="js/config.js?v=18"></script>
+<script src="js/gate.js?v=18"></script>
+<script src="js/github.js?v=18"></script>
+<script src="js/prices.js?v=18"></script>
+<script src="js/demo.js?v=18"></script>
+<script src="js/signal.js?v=18"></script>
+<script src="js/equity.js?v=18"></script>
+<script src="js/currency.js?v=18"></script>
+<script src="js/chart.js?v=18"></script>
+<script src="js/router.js?v=18"></script>
+<script src="js/stats.js?v=18"></script>
+<script src="js/history.js?v=18"></script>
+<script src="js/view-stats.js?v=18"></script>
+<script src="js/compare.js?v=18"></script>
+<script src="js/stocks.js?v=18"></script>
+<script src="js/crypto.js?v=18"></script>
+<script src="js/alerts.js?v=18"></script>
+<script src="js/install.js?v=18"></script>
+<script src="js/app.js?v=18"></script>
 </body>
 </html>
